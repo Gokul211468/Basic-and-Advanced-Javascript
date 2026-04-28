@@ -226,11 +226,3 @@ for (let i = 0; i < keys.length; i++) {
     console.log(key, s[key]);
 }
 
-for(let i = 1; i <= 10; i++){
-    console.log(`7*${i} = ${7*i}`);
-}
-
-console.log("even multiples of 7"); 
-for(let i = 1; i <= 10; i++){
-   if(7*i % 2 === 0) console.log(`7*${i} = ${7*i}`);
-}
