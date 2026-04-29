@@ -18,8 +18,9 @@ function add1(a, b){
   return a+b;
 }
 console.log(add1(3,5))
-const add2 = (a, b) => a + b;
-console.log(add2(3,5));
+
+const addNum = (a, b) => a + b;
+console.log(addNum(3,5));
 
 function square1(x){
   return x*x;
