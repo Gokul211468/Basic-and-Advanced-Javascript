@@ -13,3 +13,13 @@ body {
   border-radius: 8px;
 
 }
+
+.done {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+.box{
+    padding: 20px;
+    margin: 10px;
+}
