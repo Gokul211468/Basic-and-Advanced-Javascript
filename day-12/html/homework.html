@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12 ï¿½ Error Handling | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>DAY 12 ï¿½ ERROR HANDLING</h1>
+            <p class="subtitle">Homework: Take-home Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Homework Exercises</h2>
+                
+                <section>
+                    <h3>Exercise 1: Safe Array Access</h3>
+                    <div style="padding: 15px; background: #FFF3E0; border-radius: 4px; margin-bottom: 15px;">
+                        <p style="font-size: 12px; color: #555; margin-bottom: 10px;">Array: [10, 20, 30]</p>
+                        <input id="array-index" type="number" placeholder="Index (0-2)" style="padding: 8px; margin-bottom: 10px; width: 100%; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                        <button id="access-array" style="padding: 10px 20px; cursor: pointer; width: 100%; background: #FF9800; color: white; border: none; border-radius: 4px;">Access Element</button>
+                    </div>
+                    <p id="array-output" style="color: #666; font-size: 12px;"></p>
+                    <pre><code>function getArrayElement(arr, index) {
+  try {
+    if (!Array.isArray(arr)) {
+      throw new Error("First argument must be an array");
+    }
+    if (index < 0 || index >= arr.length) {
+      throw new Error("Index out of bounds");
+    }
+    return arr[index];
+  } catch (e) {
+    console.log("Error:", e.message);
+    return null;
+  }
+}
+
+
+
+
