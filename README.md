@@ -1,46 +1,29 @@
-# JavaScript curriculum
+# My JavaScript Learning Journey
 
-Materials for a full JavaScript track for beginners through advanced topics, organized as interactive browser-based practice pages.
+A personal record of my progress through a full JavaScript curriculum — from absolute basics to advanced browser concepts — built as interactive, browser-based practice pages I can open and run without any setup.
 
-## Live demo
+## 🔗 Live Practice Site
 
-**Click here to view:** https://gokul211468.github.io/Basic-and-Advanced-Javascript/
+**→ [Click here to view](https://gokul211468.github.io/Basic-and-Advanced-Javascript/)**
 
-Explore all 13 days of interactive lessons, hands-on tasks, and homework exercises directly in your browser using the Curriculum panel on the right sidebar.
+All lessons, in-class tasks, and homework are live here. Use the **Curriculum** panel on the right sidebar to jump between days and pages.
 
-**Local setup:** You can also open `index.html` in your browser locally (double-click or "Open with…" from your editor).
+**Local setup:** Clone the repo and open `index.html` directly in your browser — no server needed.
 
-## Browser practice pages
+---
 
-Locally, open **`index.html`** in your browser (double-click or "Open with…" from your editor). Use the **Curriculum** panel on the right to jump between days and pages.
+## What I'm Learning
 
-Each published practice day has:
+This curriculum takes me from writing my first line of JavaScript to understanding advanced engine-level behaviour. Here's what each phase covers:
 
-- **`lesson.html`** — Topics and examples you can read and try in DevTools.
-- **`hands-on.html`** — Short tasks for class time.
-- **`homework.html`** — Take-home practice.
+## How Each Day Is Structured
 
-Scripts live next to the HTML under `day-N/js/`. Shared styling is **`shared/css/style.css`**. Each page includes a **`page-shell`** grid and the **Curriculum** links are plain HTML in `<aside class="site-outline">` (no script)—duplicate/update that block on every page when you add a day.
+Every day has three pages, which I work through in order:
 
-To add another practice day: create `day-N/html/` and `day-N/js/` from an existing day, then **edit the Curriculum `<aside>` on every HTML page** (`index.html` and each `day-*/html/*.html`) so the new day appears with correct `href`s, `<details open>` on the day being viewed, and **`aria-current="page"`** on the active link only.
+- **`lesson.html`** — Explanations and demo code I can read and experiment with in DevTools
+- **`hands-on.html`** — Short exercises I work through during a study session
+- **`homework.html`** — Take-home practice to reinforce what I learned
 
-## What the course covers
+Scripts for each day live in `day-N/js/`. Shared styles are in `shared/css/style.css`.
 
-**Foundations (Days 1–5)** — Variables and types, operators, control flow, and loops.
-
-**Core Features (Days 6–9)** — Functions, arrays, objects, and modern syntax (destructuring, spread operator, template literals).
-
-**Browser and Interaction (Days 10–12)** — DOM basics, events, and error handling.
-
-**Advanced Concepts (Day 13)** — Hoisting and the Temporal Dead Zone.
-
-## Status
-
-✅ Foundations (Days 1–5)  
-✅ Core Features (Days 6–9)  
-✅ Browser and Interaction (Days 10–12)  
-✅ Advanced Concepts (Day 13)
-
-## License
-
-Internal training materials. Not for redistribution without permission.
+---
