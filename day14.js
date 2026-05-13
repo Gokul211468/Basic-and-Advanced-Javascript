@@ -63,22 +63,93 @@
 // })();
 
 
-function makeCounter() {
-  let count = 0;
+// function makeCounter() {
+//   let count = 0;
 
-  return function () {
-    count++;
-    return count;
-  };
-}
+//   return function () {
+//     count++;
+//     return count;
+//   };
+// }
 
-const counter1 = makeCounter();
-const counter2 = makeCounter();
+// const counter1 = makeCounter();
+// const counter2 = makeCounter();
 
-console.log(counter1()); // 1
-console.log(counter1()); // 2
-console.log(counter1()); // 3
+// console.log(counter1()); // 1
+// console.log(counter1()); // 2
+// console.log(counter1()); // 3
 
-console.log(counter2()); // 1
-console.log(counter2()); // 2
+// console.log(counter2()); // 1
+// console.log(counter2()); // 2
+
+
+
+// function whoAmI() {
+// console.log(this);
+// }
+// whoAmI();
+
+// const user = { name: "Priya", whoAmI };
+// user.whoAmI(); // logs the user object — called as a method
+
+// const other = { name: "Aarav", whoAmI };
+// other.whoAmI(); 
+
+// function greet(city, lang) {
+// console.log(`${this.name} from ${city} speaks ${lang}`);
+// }
+// const u = { name: "Priya" };
+// // call — invoke now, args listed
+// greet.call(u, "Jaipur", "Hindi"); // "Priya from Jaipur speaks Hindi"
+
+
+// // apply — invoke now, args as array
+// greet.apply(u, ["Jaipur", "Hindi"]); // same output
+// // bind — returns a new function for later
+// const greetPriya = greet.bind(u, "Jaipur"); // partially applied: city pre-set
+// greetPriya("English"); // "Priya from Jaipur speaks English"
+// greetPriya("Marathi"); // "Priya from Jaipur speaks Marathi"
+// // Once bound, this CANNOT be re-bound
+// greetPriya.call({ name: "Aarav" }, "Tamil"); // still "Priya from Jaipur speaks Tamil"
+
+
+// const user = {
+// name: "Priya",// Regular function — has its own this
+// regular: function () {
+// console.log(this.name); // "Priya" ← implicit binding
+// const arrow = ()=>{console.log(this.name)}
+// arrow();
+// },
+// // Arrow — no own this; inherits from enclosing scope (here: module/global)
+// arrow: () => {
+// console.log(this.name); // undefined ← arrow doesn't see user as this
+// },
+// };
+// user.regular(); // "Priya"
+// user.arrow(); // undefined ← surprise! arrow as a method is usually wrong
+
+
+// Task 1 Predict the `this`
+// Type the following snippet exactly: a user object with name: "Priya" and a method greet()
+// { console.log(this.name); } . Then call user.greet() . Then assign const g =
+// user.greet and call g() .
+// Predict the output of each call BEFORE running.
+// Run. Note actual output.
+// In a comment, explain why the second call lost the this .
+
+// Task 1: Predict the value of this in different function calls
+
+
+
+
+const user = {
+  name: "Priya",
+  greet: function () {
+    console.log(this.name);
+  },
+};
+
+user.greet(); 
+const g = user.greet;
+g(); 
 

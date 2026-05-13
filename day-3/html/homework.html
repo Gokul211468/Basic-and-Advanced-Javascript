@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3 â€” Operators | JavaScript Curriculum</title>
+    <title>Day 3 Operators | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -18,29 +18,98 @@
                 <h2>Homework Exercises</h2>
                 
                 <section>
-                    <h3>Exercise 1: Shopping Bill</h3>
-                    <pre><code>let price1 = 500;
-let price2 = 300;
-let price3 = 200;
-let total = price1 + price2 + price3;
-console.log("Total: â‚¹" + total);</code></pre>
+                    <h3>Exercise 1: GST Calculator (Without Functions)</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Build a function-less GST calculator</li>
+                        <li>Take <code>const price = 1500</code> and <code>const gstRate = 18</code></li>
+                        <li>Compute and log price, GST amount, and total</li>
+                    </ul>
+                    <pre><code>const price = 1500;
+const gstRate = 18;
+const gstAmount = (price * gstRate) / 100;
+const total = price + gstAmount;
+
+console.log(`Price: ₹${price}`);
+console.log(`GST (${gstRate}%): ₹${gstAmount}`);
+console.log(`Total: ₹${total}`);</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Age Verification</h3>
-                    <pre><code>let age = 18;
-console.log("Can vote: " + (age >= 18));
-console.log("Can drive: " + (age >= 18));
-console.log("Adult: " + (age > 18 && age < 60));</code></pre>
+                    <h3>Exercise 2: Comparison Table (== vs ===)</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Compare 10 different value pairs with both <code>==</code> and <code>===</code></li>
+                        <li>Make a table in a comment showing the differences</li>
+                    </ul>
+                    <pre><code>// Comparison Table: == vs ===
+// Value Pair          | ==     | ===    | Reason
+// ==================  ========================================
+// 5 and "5"           | true   | false  | == coerces string to number
+// 0 and false         | true   | false  | == coerces boolean to number
+// null and undefined  | true   | false  | == special case, === strict
+// "" and false        | true   | false  | == coerces both to 0
+// "abc" and "abc"     | true   | true   | same value and type
+// 1 and true          | true   | false  | == coerces true to 1
+// [] and ""           | true   | false  | == coerces array to string
+// 0 and "0"           | true   | false  | == coerces string to number
+// NaN and NaN         | false  | false  | NaN is never equal to itself
+// {} and {}           | false  | false  | different object instances
+
+console.log("See comments above for detailed comparison table!");</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Percentage Calculation</h3>
-                    <pre><code>let marks = 45;
-let total = 50;
-let percentage = (marks / total) * 100;
-console.log("Percentage: " + percentage + "%");
-console.log("Passed: " + (percentage >= 40));</code></pre>
+                    <h3>Exercise 3: Adult or Minor Ternary</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a ternary that returns "adult" if age ≥ 18 else "minor"</li>
+                        <li>Test with 5 different ages</li>
+                    </ul>
+                    <pre><code>const testAges = [10, 17, 18, 21, 65];
+
+testAges.forEach(age => {
+  const status = age >= 18 ? "adult" : "minor";
+  console.log(`Age ${age}: ${status}`);
+});
+
+// Age 10: minor
+// Age 17: minor
+// Age 18: adult
+// Age 21: adult
+// Age 65: adult</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 4: Discount Calculator with && and Ternary</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a "discount calculator"</li>
+                        <li>If user is a member AND total > 1000, give 10% discount</li>
+                        <li>Else no discount. Use <code>&&</code> and ternary</li>
+                    </ul>
+                    <pre><code>const isMember = true;
+const total = 1500;
+
+const discount = (isMember && total > 1000) ? (total * 10) / 100 : 0;
+const finalAmount = total - discount;
+
+console.log(`Total: ₹${total}`);
+console.log(`Member: ${isMember}`);
+console.log(`Discount: ₹${discount}`);
+console.log(`Final Amount: ₹${finalAmount}`);
+
+// Test case 2: Not a member
+const isMember2 = false;
+const total2 = 1500;
+
+const discount2 = (isMember2 && total2 > 1000) ? (total2 * 10) / 100 : 0;
+const finalAmount2 = total2 - discount2;
+
+console.log(`\nTotal: ₹${total2}`);
+console.log(`Member: ${isMember2}`);
+console.log(`Discount: ₹${discount2}`);
+console.log(`Final Amount: ₹${finalAmount2}`);</code></pre>
                 </section>
 
             </article>

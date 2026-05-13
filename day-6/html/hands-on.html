@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 6 â€” Functions | JavaScript Curriculum</title>
+    <title>Day 6 Functions | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -18,41 +18,103 @@
                 
                 <section>
                     <h3>Task 1: Rectangle Area</h3>
-                    <p>Write a function <code>area(length, width)</code> that returns the area of a rectangle.</p>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>area(length, width)</code> that returns the area of a rectangle</li>
+                        <li>Call it three times with different values and log each result</li>
+                        <li>Bonus: Rewrite the same function as an arrow function with implicit return</li>
+                    </ul>
                     <pre><code>function area(length, width) {
   return length * width;
 }
 
-console.log(area(5, 3));   // 15
-console.log(area(10, 4));  // 40
-console.log(area(7, 7));   // 49</code></pre>
-                    <p><strong>Bonus:</strong> Rewrite as an arrow function with implicit return:</p>
-                    <pre><code>let areaArrow = (length, width) => length * width;
+console.log(area(5, 10));   // 50
+console.log(area(7, 3));    // 21
+console.log(area(12, 4));   // 48
 
-console.log(areaArrow(8, 6));  // 48</code></pre>
+// Bonus: Arrow function with implicit return
+const areaArrow = (length, width) => length * width;
+
+console.log(areaArrow(5, 10));  // 50
+console.log(areaArrow(7, 3));   // 21
+console.log(areaArrow(12, 4));  // 48</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 2: Greeting with Default</h3>
-                    <p>Create a function that greets a user, with a default greeting if no name is provided.</p>
-                    <pre><code>function sayHello(name = "Guest") {
-  return "Hello, " + name + "!";
+                    <h3>Task 2: Greeting with Default Parameters</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>greetName(name)</code> that returns "Hello, &lt;name&gt;!"</li>
+                        <li>Use a default parameter: if no name is passed, it should default to "Guest"</li>
+                        <li>Call it three times: with "Priya", with "Aarav", and with no argument</li>
+                        <li>Bonus: Try <code>greetName(null)</code> � does it use the default? Why or why not?</li>
+                    </ul>
+                    <pre><code>function greetName(name = "Guest") {
+  return `Hello, ${name}!`;
 }
 
-console.log(sayHello("Priya"));
-console.log(sayHello());  // Uses default</code></pre>
+console.log(greetName("Priya"));   // Hello, Priya!
+console.log(greetName("Aarav"));   // Hello, Aarav!
+console.log(greetName());          // Hello, Guest!
+console.log(greetName(null));      // Hello, null!
+
+// Note: Default parameters only trigger for undefined, not for null!
+// null is an explicit value, so the default doesn't apply.</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 3: Multi-step Calculation</h3>
-                    <pre><code>function calculateBill(price, taxPercent) {
-  let tax = (price * taxPercent) / 100;
-  let total = price + tax;
+                    <h3>Task 3: Temperature Converter</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write an arrow function <code>cToF(celsius)</code> that converts Celsius to Fahrenheit</li>
+                        <li>Formula: <code>F = C * 9/5 + 32</code></li>
+                        <li>Use implicit return</li>
+                        <li>Test with: 0, 100, 37 (body temperature), and 45 (Jaipur summer)</li>
+                    </ul>
+                    <pre><code>const cToF = (celsius) => (celsius * 9/5) + 32;
+
+console.log(cToF(0));    // 32 (freezing point)
+console.log(cToF(100));  // 212 (boiling point)
+console.log(cToF(37));   // 98.6 (body temperature)
+console.log(cToF(45));   // 113 (Jaipur summer)</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: Pure vs Impure Functions</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a PURE function <code>double(n)</code> that returns <code>n * 2</code></li>
+                        <li>Then write an IMPURE function <code>addToTotal(n)</code> that updates an outer variable <code>let total = 0</code> and returns the new total</li>
+                        <li>Call each function three times</li>
+                        <li>Note how the impure one's output depends on previous calls</li>
+                        <li>Write a comment: which one is easier to reason about, and why?</li>
+                    </ul>
+                    <pre><code>// PURE function - always returns same output for same input
+function double(n) {
+  return n * 2;
+}
+
+console.log(double(2));   // 4
+console.log(double(5));   // 10
+console.log(double(10));  // 20
+
+// IMPURE function - output depends on outer state
+let total = 0;
+
+function addToTotal(n) {
+  total += n;
   return total;
 }
 
-let bill = calculateBill(1000, 18);
-console.log("Total with 18% GST: â‚¹" + bill);</code></pre>
+console.log(addToTotal(2));   // 2 (first call)
+console.log(addToTotal(5));   // 7 (depends on previous call)
+console.log(addToTotal(10));  // 17 (depends on all previous calls)
+
+// The pure function (double) is easier to reason about because:
+// - Same input always gives same output
+// - No hidden dependencies on external state
+// - Easier to test and debug
+// - Can be used anywhere without side effects</code></pre>
                 </section>
 
             </article>

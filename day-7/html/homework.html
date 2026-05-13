@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 7 â€” Arrays | JavaScript Curriculum</title>
+    <title>Day 7 Arrays | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -17,41 +17,66 @@
                 <h2>Homework Exercises</h2>
                 
                 <section>
-                    <h3>Exercise 1: Calculate Average</h3>
-                    <pre><code>let marks = [75, 82, 90, 68, 88];
-let sum = 0;
-
-for (let mark of marks) {
-  sum += mark;
-}
-
-let average = sum / marks.length;
-console.log("Average: " + average);  // 80.6</code></pre>
+                    <h3>Exercise 1: Map Greetings</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Given an array of names: <code>["Priya", "Aarav", "Riya"]</code></li>
+                        <li>Use <code>map()</code> to create a new array of greetings: "Hello, Priya", "Hello, Aarav", etc.</li>
+                    </ul>
+                    <pre><code>const names = ["Priya", "Aarav", "Riya"];
+const greetings = names.map(name => `Hello, ${name}`);
+console.log(greetings);
+// ["Hello, Priya", "Hello, Aarav", "Hello, Riya"]</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Find Maximum</h3>
-                    <pre><code>let numbers = [45, 23, 89, 12, 56, 78];
-let max = numbers[0];
+                    <h3>Exercise 2: Filter Even and Sum</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Given an array: <code>[1, 2, 3, 4, 5, 6, 7, 8]</code></li>
+                        <li>Filter the array to only EVEN numbers</li>
+                        <li>Then use <code>reduce()</code> to sum them</li>
+                    </ul>
+                    <pre><code>const nums = [1, 2, 3, 4, 5, 6, 7, 8];
 
-for (let num of numbers) {
-  if (num > max) {
-    max = num;
-  }
-}
+const evenSum = nums
+  .filter(n => n % 2 === 0)
+  .reduce((sum, n) => sum + n, 0);
 
-console.log("Maximum: " + max);  // 89
-
-// Or use built-in
-console.log(Math.max(...numbers));  // 89</code></pre>
+console.log(evenSum);  // 20 (2+4+6+8)</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Remove Duplicates</h3>
-                    <pre><code>let items = [1, 2, 2, 3, 3, 3, 4];
-let unique = [...new Set(items)];
+                    <h3>Exercise 3: Find Maximum (Two Ways)</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Given: <code>[3, 1, 4, 1, 5, 9, 2, 6]</code></li>
+                        <li>Find the max using <code>Math.max(...arr)</code></li>
+                        <li>Find the max using <code>reduce()</code></li>
+                    </ul>
+                    <pre><code>const arr = [3, 1, 4, 1, 5, 9, 2, 6];
 
-console.log(unique);  // [1, 2, 3, 4]</code></pre>
+const max1 = Math.max(...arr);
+const max2 = arr.reduce((max, n) => n > max ? n : max, arr[0]);
+
+console.log(max1);  // 9
+console.log(max2);  // 9</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 4: Calculate Average</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function that returns the average of an array</li>
+                        <li>Use <code>reduce()</code> to calculate the sum, then divide by length</li>
+                        <li>Test with: <code>[10, 20, 30]</code> (should return 20)</li>
+                    </ul>
+                    <pre><code>function average(arr) {
+  const sum = arr.reduce((total, n) => total + n, 0);
+  return sum / arr.length;
+}
+
+console.log(average([10, 20, 30]));  // 20</code></pre>
                 </section>
 
             </article>

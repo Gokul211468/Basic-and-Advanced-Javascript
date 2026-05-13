@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4 â€” Control Flow | JavaScript Curriculum</title>
+    <title>Day 4 Control Flow | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -18,39 +18,180 @@
                 <h2>Hands-on Tasks</h2>
                 
                 <section>
-                    <h3>Task 1: Check Number</h3>
-                    <pre><code>let num = 10;
-if (num > 0) {
-  console.log("Positive");
-} else if (num < 0) {
-  console.log("Negative");
-} else {
-  console.log("Zero");
-}</code></pre>
-                </section>
+                    <h3>Task 1: Grading System</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Declare <code>const marks = 72;</code></li>
+                        <li>Use if / else if / else to log a grade based on these ranges:</li>
+                        <ul>
+                            <li>90+ → "A"</li>
+                            <li>75–89 → "B"</li>
+                            <li>60–74 → "C"</li>
+                            <li>below 60 → "F"</li>
+                        </ul>
+                        <li>Test by changing marks to 95, 50, and 75 — confirm each prints the right grade</li>
+                        <li>Bonus: add a check at the top — if marks is negative or above 100, log "Invalid marks" and stop</li>
+                    </ul>
+                    <pre><code>const marks = 72;
 
-                <section>
-                    <h3>Task 2: Voting Eligibility</h3>
-                    <pre><code>let age = 20;
-if (age >= 18) {
-  console.log("Eligible to vote");
-} else {
-  console.log("Not eligible to vote");
-}</code></pre>
-                </section>
-
-                <section>
-                    <h3>Task 3: Grade Calculator</h3>
-                    <pre><code>let marks = 75;
-if (marks >= 80) {
+// Bonus: Validate marks first
+if (marks < 0 || marks > 100) {
+  console.log("Invalid marks");
+} else if (marks >= 90) {
   console.log("Grade: A");
-} else if (marks >= 60) {
+} else if (marks >= 75) {
   console.log("Grade: B");
-} else if (marks >= 40) {
+} else if (marks >= 60) {
   console.log("Grade: C");
 } else {
   console.log("Grade: F");
-}</code></pre>
+}
+
+// Test with different values
+// marks = 95 → Grade: A
+// marks = 50 → Grade: F
+// marks = 75 → Grade: B
+// marks = 105 → Invalid marks</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 2: Day Type with switch</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Declare <code>const day = "Wednesday";</code></li>
+                        <li>Write a switch statement that logs:</li>
+                        <ul>
+                            <li>"Weekday" for Monday–Friday</li>
+                            <li>"Weekend" for Saturday and Sunday</li>
+                            <li>"Invalid day" for anything else</li>
+                        </ul>
+                        <li>Use intentional fall-through to group the weekday cases — don't repeat code</li>
+                        <li>Test with: "Monday", "Saturday", "Holiday"</li>
+                    </ul>
+                    <pre><code>const day = "Wednesday";
+
+switch(day) {
+  case "Monday":
+  case "Tuesday":
+  case "Wednesday":
+  case "Thursday":
+  case "Friday":
+    console.log("Weekday");
+    break;
+  case "Saturday":
+  case "Sunday":
+    console.log("Weekend");
+    break;
+  default:
+    console.log("Invalid day");
+}
+
+// Test cases:
+// "Monday" → Weekday
+// "Saturday" → Weekend
+// "Holiday" → Invalid day</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Truthy and Falsy Detective</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Predict whether each value is truthy or falsy, write your guess as a comment</li>
+                        <li>Then verify with <code>if (value) { ... } else { ... }</code></li>
+                        <li>Test: <code>0</code>, <code>"0"</code>, <code>""</code>, <code>" "</code> (single space), <code>null</code>, <code>undefined</code>, <code>NaN</code>, <code>[]</code>, <code>{}</code>, <code>"false"</code></li>
+                        <li>Below your code, write a short comment listing the 6 falsy values from memory</li>
+                    </ul>
+                    <pre><code>// Predict: 0 is falsy
+console.log(0 ? "truthy" : "falsy");              // falsy ✓
+
+// Predict: "0" is truthy (it's a non-empty string)
+console.log("0" ? "truthy" : "falsy");            // truthy ✓
+
+// Predict: "" is falsy (empty string)
+console.log("" ? "truthy" : "falsy");             // falsy ✓
+
+// Predict: " " is truthy (non-empty string, even with space)
+console.log(" " ? "truthy" : "falsy");            // truthy ✓
+
+// Predict: null is falsy
+console.log(null ? "truthy" : "falsy");           // falsy ✓
+
+// Predict: undefined is falsy
+console.log(undefined ? "truthy" : "falsy");      // falsy ✓
+
+// Predict: NaN is falsy
+console.log(NaN ? "truthy" : "falsy");            // falsy ✓
+
+// Predict: [] is truthy (arrays are objects, objects are truthy)
+console.log([] ? "truthy" : "falsy");             // truthy ✓
+
+// Predict: {} is truthy (objects are truthy)
+console.log({} ? "truthy" : "falsy");             // truthy ✓
+
+// Predict: "false" is truthy (non-empty string)
+console.log("false" ? "truthy" : "falsy");        // truthy ✓
+
+// The 6 falsy values in JavaScript (memorize these!):
+// 1. false (boolean)
+// 2. 0 (number)
+// 3. "" (empty string)
+// 4. null
+// 5. undefined
+// 6. NaN</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: Guard Clauses Refactor</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Refactor the nested function below using guard clauses — flip each condition and return early</li>
+                        <li>Test with: a valid user, a user with isBanned = true, and null</li>
+                    </ul>
+                    <pre><code>// BEFORE: Nested if statements (hard to read)
+function canPostComment_old(user) {
+  if (user) {
+    if (!user.isBanned) {
+      if (user.email) {
+        console.log("Can post comment");
+        return true;
+      }
+    }
+  }
+}
+
+// AFTER: Guard clauses (cleaner, early return)
+function canPostComment(user) {
+  // Guard: user must exist
+  if (!user) {
+    console.log("User does not exist");
+    return false;
+  }
+  
+  // Guard: user must not be banned
+  if (user.isBanned) {
+    console.log("User is banned");
+    return false;
+  }
+  
+  // Guard: user must have email
+  if (!user.email) {
+    console.log("User has no email");
+    return false;
+  }
+  
+  // If all guards pass
+  console.log("Can post comment");
+  return true;
+}
+
+// Test cases
+const validUser = { isBanned: false, email: "user@example.com" };
+canPostComment(validUser);              // Can post comment
+
+const bannedUser = { isBanned: true, email: "bad@example.com" };
+canPostComment(bannedUser);             // User is banned
+
+canPostComment(null);                   // User does not exist</code></pre>
                 </section>
 
             </article>

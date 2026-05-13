@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1 â€” Basics | JavaScript Curriculum</title>
+    <title>Day 1 Basics | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -19,44 +19,59 @@
                 <p>Complete these exercises at home. Open the browser console and test your code.</p>
                 
                 <section>
-                    <h3>Exercise 1: About You</h3>
-                    <p>Log the following information about yourself:</p>
-                    <pre><code>// Log your name
-console.log("Name: Your Name");
-
-// Log your age
-console.log("Age: 20");
-
-// Log your city
-console.log("City: Your City");</code></pre>
+                    <h3>Exercise 1: Create and Run a File</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create a file <code>day1.js</code></li>
+                        <li>Write 5 different console.log statements in it</li>
+                        <li>Run it with <code>node day1.js</code> in your terminal</li>
+                    </ul>
+                    <pre><code>console.log("Welcome to Day 1");
+console.log(42);
+console.log("Learning JavaScript is fun!");
+console.log(10 + 20);
+console.log("The answer is " + 42);</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Calculate Your Allowance</h3>
-                    <p>If you get â‚¹500 per week, calculate how much you get in different time periods:</p>
-                    <pre><code>let weeklyAllowance = 500;
+                    <h3>Exercise 2: Declare Variables</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Declare 3 variables — one const for your name, one let for your age, one const for your city</li>
+                        <li>Log all three</li>
+                    </ul>
+                    <pre><code>const myName = "Gokul";
+let myAge = 22;
+const myCity = "Jaipur";
 
-// Calculate monthly
-console.log("Monthly: " + (weeklyAllowance * 4));
-
-// Calculate yearly
-console.log("Yearly: " + (weeklyAllowance * 52));</code></pre>
+console.log(myName);
+console.log(myAge);
+console.log(myCity);</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Order Summary</h3>
-                    <p>Calculate the total cost of items including tax (18% GST):</p>
-                    <pre><code>let item1 = 100;
-let item2 = 250;
-let item3 = 75;
+                    <h3>Exercise 3: Try Reassigning Variables</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Try reassigning each of the 3 variables from Exercise 2</li>
+                        <li>Note which throws an error and why</li>
+                    </ul>
+                    <pre><code>const myName = "Gokul";
+let myAge = 22;
+const myCity = "Jaipur";
 
-let subtotal = item1 + item2 + item3;
-let tax = subtotal * 0.18;
-let total = subtotal + tax;
+// This works - let can be reassigned
+myAge = 23;
+console.log(myAge);           // 23
 
-console.log("Subtotal: â‚¹" + subtotal);
-console.log("Tax (18%): â‚¹" + tax);
-console.log("Total: â‚¹" + total);</code></pre>
+// This fails - const cannot be reassigned
+// myName = "Rahul";          // Error: Assignment to constant variable
+
+// This fails - const cannot be reassigned
+// myCity = "Delhi";          // Error: Assignment to constant variable
+
+console.log("const cannot be reassigned - that's why it's safe for fixed values!");
+console.log("let can be reassigned - use it for values that change!");</code></pre>
                 </section>
 
             </article>

@@ -1,31 +1,30 @@
-// Exercise 1: Safe Array Access
-let arrayIndexInput = document.querySelector("#array-index");
-let accessArrayBtn = document.querySelector("#access-array");
-let arrayOutput = document.querySelector("#array-output");
+// Exercise 1: safeDivide + try/catch
+function safeDivide(a, b) {
+  if (b === 0) {
+    throw new Error("Division by zero");
+  }
+  return a / b;
+}
 
-const testArray = [10, 20, 30];
+// Demos — wrap in try/catch and log; expected outcomes:
+// safeDivide(10, 2)  → 5
+// safeDivide(10, 0)  → catch: e.message === "Division by zero"
 
-function getArrayElement(arr, index) {
-  try {
-    if (!Array.isArray(arr)) {
-      throw new Error("First argument must be an array");
-    }
-    if (index < 0 || index >= arr.length) {
-      throw new Error("Index out of bounds");
-    }
-    return arr[index];
-  } catch (e) {
-    console.log("Error:", e.message);
-    throw e;
+// Exercise 2: NotFoundError + getUserById
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "NotFoundError";
   }
 }
 
-accessArrayBtn.addEventListener("click", function() {
-  try {
-    let index = Number(arrayIndexInput.value);
-    let result = getArrayElement(testArray, index);
-    arrayOutput.innerHTML = `<span style='color: green;'>✓ Element at index ${index}: ${result}</span>`;
-  } catch (e) {
-    arrayOutput.innerHTML = `<span style='color: red;'>✗ Error: ${e.message}</span>`;
+function getUserById(id) {
+  if (id === 1 || id === 2 || id === 3) {
+    return { id: id, name: "User " + id };
   }
-});
+  throw new NotFoundError("No user for id " + id);
+}
+
+// Demos — use try/catch; branch with err instanceof NotFoundError:
+// getUserById(1)   → { id: 1, name: "User 1" }
+// getUserById(99)  → catch: NotFoundError, err.message === "No user for id 99"

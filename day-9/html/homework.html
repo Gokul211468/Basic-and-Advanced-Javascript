@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 9 â€” Modern Syntax | JavaScript Curriculum</title>
+    <title>Day 9 Modern Syntax | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -17,49 +17,59 @@
                 <h2>Homework Exercises</h2>
                 
                 <section>
-                    <h3>Exercise 1: Function with Rest Parameter</h3>
+                    <h3>Exercise 1: Rest Parameters with joinNames</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>joinNames(separator, ...names)</code> that joins all names using the separator</li>
+                        <li>Test: <code>joinNames(", ", "Priya", "Aarav", "Riya")</code> should give "Priya, Aarav, Riya"</li>
+                    </ul>
                     <pre><code>function joinNames(separator, ...names) {
   return names.join(separator);
 }
 
 console.log(joinNames(", ", "Priya", "Aarav", "Riya"));
-// "Priya, Aarav, Riya"</code></pre>
+// "Priya, Aarav, Riya"
+
+console.log(joinNames(" - ", "Alice", "Bob", "Charlie"));
+// "Alice - Bob - Charlie"</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Merge Settings</h3>
-                    <pre><code>const defaultSettings = { 
-  theme: "light", 
-  lang: "en", 
-  notifications: true 
-};
+                    <h3>Exercise 2: Merge Settings with Spread</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Declare user defaults: <code>{ theme: "light", fontSize: 14, lang: "en" }</code></li>
+                        <li>Declare user settings: <code>{ theme: "dark", fontSize: 18 }</code></li>
+                        <li>Use object spread to merge them so user settings override defaults</li>
+                        <li>Log the final merged object</li>
+                    </ul>
+                    <pre><code>let userDefaults = { theme: "light", fontSize: 14, lang: "en" };
+let userSettings = { theme: "dark", fontSize: 18 };
+let final = { ...userDefaults, ...userSettings };
 
-const userSettings = { 
-  theme: "dark", 
-  fontSize: 16 
-};
-
-function applyPrefs(defaults, prefs) {
-  return { ...defaults, ...prefs };
-}
-
-const final = applyPrefs(defaultSettings, userSettings);
-console.log(final);</code></pre>
+console.log("Final settings: ", final);
+// { theme: "dark", fontSize: 18, lang: "en" }</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Extract Data</h3>
-                    <pre><code>const student = {
+                    <h3>Exercise 3: Nested Destructuring</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use nested destructuring to extract <code>name</code> and nested <code>math</code> grade from a student object</li>
+                        <li>Log the result: "<name> scored <math> in math"</li>
+                    </ul>
+                    <pre><code>let student = {
   id: 101,
   name: "Gokul",
-  grades: { math: 95, english: 88 },
-  enrolled: true
+  grades: {
+    math: 95,
+    english: 88
+  }
 };
 
-// Extract what you need
-const { name, grades: { math }, enrolled } = student;
-
-console.log(`${name} scored ${math} and is enrolled: ${enrolled}`);</code></pre>
+let { name, grades: { math } } = student;
+console.log(`${name} scored ${math} in math`);
+// Gokul scored 95 in math</code></pre>
                 </section>
 
             </article>

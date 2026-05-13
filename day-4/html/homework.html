@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4 â€” Control Flow | JavaScript Curriculum</title>
+    <title>Day 4 Control Flow | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -18,37 +18,78 @@
                 <h2>Homework Exercises</h2>
                 
                 <section>
-                    <h3>Exercise 1: Traffic Light</h3>
-                    <pre><code>let light = "yellow";
-if (light === "red") {
-  console.log("Stop");
-} else if (light === "yellow") {
-  console.log("Wait");
-} else if (light === "green") {
-  console.log("Go");
-}</code></pre>
+                    <h3>Exercise 1: Grading System with Validation</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create a grading system similar to the one in hands-on</li>
+                        <li>Use if/else if/else structure to assign grades</li>
+                        <li>Test with marks = 85 (should show "Grade: B")</li>
+                    </ul>
+                    <pre><code>let marks = 85;
+if (marks >= 90) {
+  console.log("Grade: A");
+} else if (marks >= 80) {
+  console.log("Grade: B");
+} else if (marks >= 70) {
+  console.log("Grade: C");
+} else {
+  console.log("Grade: F");
+}
+
+// Test with different values:
+// marks = 95 → Grade: A
+// marks = 85 → Grade: B
+// marks = 72 → Grade: C
+// marks = 50 → Grade: F</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Divisibility Check</h3>
-                    <pre><code>let num = 15;
-if (num % 2 === 0) {
-  console.log("Even");
-} else {
-  console.log("Odd");
-}</code></pre>
+                    <h3>Exercise 2: Day Type with Switch Statement</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use a switch statement to identify weekdays and weekends</li>
+                        <li>Use intentional fall-through (don't break between related cases)</li>
+                        <li>Test with: "Wednesday" (weekday), "Saturday" (weekend)</li>
+                    </ul>
+                    <pre><code>let day = "Wednesday";
+switch(day) {
+  case "Monday":
+  case "Tuesday":
+  case "Wednesday":
+  case "Thursday":
+  case "Friday":
+    console.log("Weekday");
+    break;
+  case "Saturday":
+  case "Sunday":
+    console.log("Weekend");
+    break;
+  default:
+    console.log("Invalid day");
+}
+
+// Test cases:
+// "Monday" → Weekday
+// "Wednesday" → Weekday
+// "Saturday" → Weekend
+// "Holiday" → Invalid day</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Season Finder</h3>
-                    <pre><code>let month = 6;
-if (month >= 3 && month <= 5) {
-  console.log("Summer");
-} else if (month >= 6 && month <= 8) {
-  console.log("Monsoon");
-} else {
-  console.log("Winter");
-}</code></pre>
+                    <h3>Exercise 3: Voting Eligibility with Ternary</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use a ternary operator to determine voting eligibility</li>
+                        <li>Show: "Can vote" if age >= 18, else "Cannot vote"</li>
+                        <li>Test with age = 17 (should show "Cannot vote")</li>
+                    </ul>
+                    <pre><code>let age = 17;
+console.log(age >= 18 ? "Can vote" : "Cannot vote");
+
+// Test with different ages:
+// age = 17 → Cannot vote
+// age = 18 → Can vote
+// age = 25 → Can vote</code></pre>
                 </section>
 
             </article>

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 10 ï¿½ DOM Basics | JavaScript Curriculum</title>
+    <title>Day 10 DOM Basics | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
     <div class="page-shell">
         <header class="site-header">
-            <h1>DAY 10 ï¿½ DOM BASICS</h1>
+            <h1>DAY 10 DOM BASICS</h1>
             <p class="subtitle">Hands-on: In-class Tasks</p>
         </header>
         <main class="site-content">
@@ -18,6 +18,13 @@
                 
                 <section>
                     <h3>Task 1: DOM Selection</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use <code>document.querySelector()</code> to select different elements</li>
+                        <li>Select <code>h1</code> heading, element with class <code>box</code>, and all <code>li</code> items</li>
+                        <li>Check the number of items and log all selections to the console</li>
+                        <li>Click the button below to see selections in console (F12)</li>
+                    </ul>
                     <p>Elements on this page that you can select:</p>
                     <div class="box" style="padding: 15px; background: #f5f5f5; border-radius: 4px; margin-bottom: 15px;">
                         <p>This is a paragraph in a box</p>
@@ -29,54 +36,84 @@
                         </ul>
                     </div>
                     <button id="select-btn" style="padding: 10px 20px; cursor: pointer;">Check Selection in Console</button>
-                    <p style="font-size: 12px; color: #666;"><strong>Try this in console:</strong></p>
-                    <pre><code>// Select elements from the page
-let heading = document.querySelector("h1");
-let box = document.querySelector(".box");
-let items = document.querySelectorAll("li");
+                    <pre><code>let selectBtn = document.querySelector("#select-btn");
 
-// Check what you selected
-console.log(heading);
-console.log(box);
-console.log(items.length);</code></pre>
-                </section>
+selectBtn.addEventListener("click", function() {
+  let heading = document.querySelector("h1");
+  let box = document.querySelector(".box");
+  let items = document.querySelectorAll("li");
 
-                <section>
-                    <h3>Task 2: Modify Content</h3>
-                    <div id="title" style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; margin-bottom: 15px; border-radius: 4px;">
-                        <h4>Original Title</h4>
-                    </div>
-                    <button id="modify-btn" style="padding: 10px 20px; cursor: pointer;">Modify Content</button>
-                    <p style="font-size: 12px; color: #666; margin-top: 10px;"><strong>Code:</strong></p>
-                    <pre><code>let title = document.getElementById("title");
-if (title) {
-  title.textContent = "Welcome to JavaScript!";
-}
-
-let paragraphs = document.querySelectorAll("p");
-paragraphs.forEach(function(p) {
-  p.style.color = "#333";
-  p.style.fontSize = "16px";
+  console.log("Heading:", heading);
+  console.log("Box:", box);
+  console.log("Number of items:", items.length);
+  console.log("All items:", items);
 });</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 3: Create Elements</h3>
+                    <h3>Task 2: Modify Content and Styling</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Click the button to modify the title text and change its background color</li>
+                        <li>Also change the color and font size of all paragraphs on the page</li>
+                        <li>Use <code>style</code> property to apply inline CSS</li>
+                    </ul>
+                    <div id="title" style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; margin-bottom: 15px; border-radius: 4px;">
+                        <h4>Original Title</h4>
+                    </div>
+                    <button id="modify-btn" style="padding: 10px 20px; cursor: pointer;">Modify Content</button>
+                    <pre><code>let modifyBtn = document.querySelector("#modify-btn");
+
+modifyBtn.addEventListener("click", function() {
+  let title = document.querySelector("#title");
+  if (title) {
+    title.querySelector("h4").textContent = "Welcome to JavaScript!";
+    title.style.backgroundColor = "#90EE90";
+  }
+
+  let paragraphs = document.querySelectorAll("p");
+  paragraphs.forEach(function(p) {
+    p.style.color = "#1976D2";
+    p.style.fontSize = "16px";
+    p.style.fontWeight = "bold";
+  });
+});</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Create and Append Elements</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Click the button to dynamically create new <code>div</code> elements</li>
+                        <li>Use <code>document.createElement()</code> to create elements</li>
+                        <li>Set text content and styling</li>
+                        <li>Use <code>appendChild()</code> to add the element to the container</li>
+                        <li>Each click creates a new element</li>
+                    </ul>
                     <div class="container" id="element-container" style="padding: 15px; background: #e8f5e9; border-radius: 4px; margin-bottom: 15px; min-height: 50px; border: 2px dashed #4CAF50;">
                         <p style="color: #666;">New elements will appear here</p>
                     </div>
                     <button id="create-btn" style="padding: 10px 20px; cursor: pointer;">Create New Element</button>
-                    <p style="font-size: 12px; color: #666; margin-top: 10px;"><strong>Code:</strong></p>
-                    <pre><code>// Create new element
-let newDiv = document.createElement("div");
-newDiv.className = "box";
-newDiv.textContent = "This is a new element";
+                    <pre><code>let createBtn = document.querySelector("#create-btn");
+let elementCount = 0;
 
-// Add to page
-let container = document.querySelector(".container");
-if (container) {
-  container.appendChild(newDiv);
-}</code></pre>
+createBtn.addEventListener("click", function() {
+  elementCount++;
+  
+  let container = document.querySelector("#element-container");
+  
+  let newDiv = document.createElement("div");
+  newDiv.className = "box";
+  newDiv.style.padding = "15px";
+  newDiv.style.background = "#FFE0B2";
+  newDiv.style.margin = "10px 0";
+  newDiv.style.borderRadius = "4px";
+  newDiv.textContent = `New Element #${elementCount} - Created Dynamically!`;
+
+  if (container) {
+    container.appendChild(newDiv);
+  }
+});</code></pre>
                 </section>
 
             </article>

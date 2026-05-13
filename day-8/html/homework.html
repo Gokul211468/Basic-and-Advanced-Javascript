@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8 â€” Objects | JavaScript Curriculum</title>
+    <title>Day 8 Objects | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -17,66 +17,80 @@
                 <h2>Homework Exercises</h2>
                 
                 <section>
-                    <h3>Exercise 1: Bank Account</h3>
-                    <pre><code>let account = {
-  accountHolder: "Ravi Kumar",
-  balance: 50000,
-  deposit: function(amount) {
-    this.balance += amount;
-    return "Deposited â‚¹" + amount;
-  },
-  withdraw: function(amount) {
-    if (amount <= this.balance) {
-      this.balance -= amount;
-      return "Withdrew â‚¹" + amount;
-    }
-    return "Insufficient funds";
-  }
+                    <h3>Exercise 1: Book with Bracket Notation and Method</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create an object <code>book</code> with properties: title, author, year, pages</li>
+                        <li>Log the title using bracket notation with a variable key</li>
+                        <li>Add a method <code>summary()</code> that returns "<title> by <author> (<year>)" using template literals and <code>this</code></li>
+                    </ul>
+                    <pre><code>const book = {
+  title: "Wings of fire",
+  author: "A P J Abdul Kalam",
+  year: 2018,
+  pages: 320
 };
 
-console.log(account.deposit(5000));
-console.log(account.withdraw(2000));
-console.log("Balance: â‚¹" + account.balance);</code></pre>
+const key = "title";
+console.log(book[key]);  // Wings of fire
+
+book.summary = function () {
+  return `${this.title} by ${this.author} (${this.year})`;
+};
+
+console.log(book.summary());  // Wings of fire by A P J Abdul Kalam (2018)</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Car Object</h3>
-                    <pre><code>let car = {
-  brand: "Toyota",
-  model: "Fortuner",
-  year: 2022,
-  mileage: 0,
-  drive: function(km) {
-    this.mileage += km;
-    return "Drove " + km + " km";
-  },
-  getInfo: function() {
-    return this.year + " " + this.brand + " " + this.model +
-           " - Mileage: " + this.mileage + " km";
-  }
+                    <h3>Exercise 2: Object.entries with forEach</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use <code>Object.entries()</code> to get all key-value pairs</li>
+                        <li>Use <code>forEach()</code> to print every property of the book object in "key: value" format</li>
+                    </ul>
+                    <pre><code>const book = {
+  title: "Wings of fire",
+  author: "A P J Abdul Kalam",
+  year: 2018,
+  pages: 320
 };
 
-console.log(car.drive(100));
-console.log(car.getInfo());</code></pre>
+Object.entries(book).forEach(([key, value]) => {
+  console.log(`${key}: ${value}`);
+});
+
+// Output:
+// title: Wings of fire
+// author: A P J Abdul Kalam
+// year: 2018
+// pages: 320</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Object Methods</h3>
-                    <pre><code>let book = {
-  title: "JavaScript Basics",
-  author: "John Doe",
-  pages: 350,
-  isAvailable: true
+                    <h3>Exercise 3: Copy Object with Spread Operator</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Take the book object and copy it using the spread operator</li>
+                        <li>Modify the copy (change year and title)</li>
+                        <li>Verify the original object is unchanged</li>
+                    </ul>
+                    <pre><code>const book = {
+  title: "Wings of fire",
+  author: "A P J Abdul Kalam",
+  year: 2018,
+  pages: 320
 };
 
-// Get all keys
-console.log(Object.keys(book));
+const bookCopy = { ...book };
 
-// Get all values
-console.log(Object.values(book));
+bookCopy.year = 2020;
+bookCopy.title = "Modified Book";
 
-// Check property exists
-console.log("author" in book);  // true</code></pre>
+console.log(book);      // Original unchanged
+console.log(bookCopy);  // Copy is modified
+
+// book.title = "Wings of fire" (unchanged)
+// bookCopy.title = "Modified Book" (changed)</code></pre>
                 </section>
 
             </article>

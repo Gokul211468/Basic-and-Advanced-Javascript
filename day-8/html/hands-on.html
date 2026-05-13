@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8 â€” Objects | JavaScript Curriculum</title>
+    <title>Day 8 Objects | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -17,55 +17,121 @@
                 <h2>Hands-on Tasks</h2>
                 
                 <section>
-                    <h3>Task 1: User Profile</h3>
-                    <pre><code>let user = {
-  firstName: "Gokul",
-  lastName: "Vinod",
-  age: 20,
-  email: "gokul@example.com",
-  getFullName: function() {
-    return this.firstName + " " + this.lastName;
-  }
-};
-
-console.log(user.getFullName());
-console.log("Email: " + user.email);</code></pre>
-                </section>
-
-                <section>
-                    <h3>Task 2: Product Object</h3>
-                    <pre><code>let product = {
-  name: "Laptop",
-  price: 50000,
-  stock: 15,
-  getPriceWithTax: function() {
-    let tax = this.price * 0.18;  // 18% GST
-    return this.price + tax;
-  }
-};
-
-console.log(product.name + " costs â‚¹" + product.price);
-console.log("With 18% GST: â‚¹" + product.getPriceWithTax());</code></pre>
-                </section>
-
-                <section>
-                    <h3>Task 3: Nested Objects</h3>
-                    <pre><code>let student = {
-  name: "Anaya",
-  address: {
+                    <h3>Task 1: Build a Student Object</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create an object <code>student</code> with properties: name = "Ananya", age = 21, city = "Jaipur", course = "BTech", marks (array of 3 numbers)</li>
+                        <li>Log the student. Then log just the name, age, and the FIRST mark using dot notation</li>
+                        <li>Add a new property email = "anaya@example.com". Update age to 22. Delete city</li>
+                        <li>Log the student again to confirm changes</li>
+                    </ul>
+                    <pre><code>const student = {
+    name: "Ananya",
+    age: 21,
     city: "Jaipur",
-    state: "Rajasthan",
-    pincode: 302001
-  },
-  scores: {
-    math: 95,
-    english: 88,
-    science: 92
-  }
+    course: "BTech",
+    marks: [60, 70, 80]
+}
+
+console.log(student);
+console.log(student.name);       // Ananya
+console.log(student.age);        // 21
+console.log(student.marks[0]);   // 60
+
+student.email = "anaya@example.com";
+student.age = 22;
+delete student.city;
+
+console.log(student);  // city is removed, age is 22, email is added</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 2: Method with this</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create an object <code>bankAccount</code> with: holder = "Aarav", balance = 5000</li>
+                        <li>Add a method <code>deposit(amount)</code> that adds to balance and returns the new balance</li>
+                        <li>Add a method <code>withdraw(amount)</code> that subtracts (only if balance is enough) and returns the new balance, or returns "insufficient balance"</li>
+                        <li>Test: deposit 1000, withdraw 2000, withdraw 10000</li>
+                    </ul>
+                    <pre><code>const bankAccount = {
+    holder: "Aarav",
+    balance: 5000,
+
+    deposit(amount) {
+        this.balance += amount;
+        return this.balance;
+    },
+
+    withdraw(amount) {
+        if (amount <= this.balance) {
+            this.balance -= amount;
+            return this.balance;
+        } else {
+            return "insufficient balance";
+        }
+    }
 };
 
-console.log(student.address.city);
-console.log("Math score: " + student.scores.math);</code></pre>
+console.log(bankAccount.deposit(1000));     // 6000
+console.log(bankAccount.withdraw(2000));    // 4000
+console.log(bankAccount.withdraw(10000));   // insufficient balance</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Destructuring</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use this object: <code>const product = { id: 101, name: "Laptop", price: 60000, brand: "Dell", stock: 5 };</code></li>
+                        <li>Destructure <code>name</code> and <code>price</code> into variables and log them</li>
+                        <li>Destructure <code>brand</code> but rename it to <code>make</code>. Log it.</li>
+                        <li>Destructure <code>warranty</code> with a default value of "1 year" (since the property doesn't exist). Log it.</li>
+                    </ul>
+                    <pre><code>const product = {
+  id: 101,
+  name: "Laptop",
+  price: 60000,
+  brand: "Dell",
+  stock: 5
+};
+
+const { name, price } = product;
+console.log(name);       // Laptop
+console.log(price);      // 60000
+
+const { brand: make } = product;
+console.log(make);       // Dell
+
+const { warranty = "1 year" } = product;
+console.log(warranty);   // 1 year (default)</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: Object as Iterable</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Use the student object from Task 1 (after modifications)</li>
+                        <li>Use <code>Object.keys()</code> to log all keys</li>
+                        <li>Use <code>Object.values()</code> to log all values</li>
+                        <li>Use <code>Object.entries()</code> with <code>forEach()</code> to log each property as "key: value"</li>
+                        <li>Count how many properties the object has</li>
+                    </ul>
+                    <pre><code>// After Task 1 modifications, student object has: name, age, course, marks, email
+
+const keys = Object.keys(student);
+console.log(keys);  // ["name", "age", "course", "marks", "email"]
+
+const values = Object.values(student);
+console.log(values);  // ["Ananya", 22, "BTech", [60, 70, 80], "anaya@example.com"]
+
+const entries = Object.entries(student);
+console.log(entries);  // [["name", "Ananya"], ["age", 22], ...]
+
+entries.forEach(([key, value]) => {
+    console.log(`${key}: ${value}`);
+});
+
+console.log("Total properties:", Object.keys(student).length);  // 5</code></pre>
                 </section>
 
             </article>

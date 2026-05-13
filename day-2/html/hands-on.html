@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2 â€” Variables | JavaScript Curriculum</title>
+    <title>Day 2 Variables | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -18,27 +18,78 @@
                 <h2>Hands-on Tasks</h2>
                 
                 <section>
-                    <h3>Task 1: Declare and Use Variables</h3>
-                    <pre><code>let city = "Mumbai";
-let population = 20000000;
-console.log(city);
-console.log(population);</code></pre>
+                    <h3>Task 1: typeof Exploration</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>In the console, log <code>typeof</code> for each: <code>42</code>, <code>"hello"</code>, <code>true</code>, <code>undefined</code>, <code>null</code>, <code>100n</code>, <code>Symbol("x")</code></li>
+                        <li>Note which one returns a SURPRISING type</li>
+                        <li>In a comment, write down which one and why</li>
+                    </ul>
+                    <pre><code>console.log(typeof 42);                 // "number"
+console.log(typeof "hello");            // "string"
+console.log(typeof true);               // "boolean"
+console.log(typeof undefined);          // "undefined"
+console.log(typeof null);               // "object" -- SURPRISE! Null is NOT an object!
+console.log(typeof 100n);               // "bigint"
+console.log(typeof Symbol("x"));        // "symbol"
+
+// Interesting fact: null returns "object" due to a quirk in JavaScript!
+// This is a historical bug that couldn't be fixed without breaking code.</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 2: Update Variable Values</h3>
-                    <pre><code>let score = 50;
-console.log("Initial score: " + score);
-score = 85;
-console.log("Updated score: " + score);</code></pre>
+                    <h3>Task 2: Template Literals</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create variables: <code>const name = "Aarav"</code>, <code>const age = 22</code>, <code>const city = "Jaipur"</code></li>
+                        <li>Build the string "Aarav, 22, from Jaipur" using OLD-style concatenation with <code>+</code></li>
+                        <li>Build the same string using a TEMPLATE LITERAL</li>
+                        <li>Then build a 3-line "card" using a multi-line template literal</li>
+                    </ul>
+                    <pre><code>const name = "Aarav";
+const age = 22;
+const city = "Jaipur";
+
+// OLD-style concatenation with +
+let oldStyle = name + ", " + age + ", from " + city;
+console.log(oldStyle);                  // Aarav, 22, from Jaipur
+
+// NEW-style with template literal
+let newStyle = `${name}, ${age}, from ${city}`;
+console.log(newStyle);                  // Aarav, 22, from Jaipur
+
+// Multi-line template literal (3-line card)
+let card = `Name: ${name}
+Age: ${age}
+City: ${city}`;
+console.log(card);</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 3: Using const for Constants</h3>
-                    <pre><code>const PI = 3.14159;
-const gravity = 9.8;
-console.log("PI = " + PI);
-console.log("Gravity = " + gravity);</code></pre>
+                    <h3>Task 3: null vs undefined</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Declare <code>let user;</code> (no value). Log it. Log its <code>typeof</code></li>
+                        <li>Now set <code>user = null</code>. Log it. Log its <code>typeof</code></li>
+                        <li>Compare: <code>null == undefined</code> and <code>null === undefined</code>. Note the difference.</li>
+                    </ul>
+                    <pre><code>let user;
+console.log(user);                      // undefined
+console.log(typeof user);               // "undefined"
+
+user = null;
+console.log(user);                      // null
+console.log(typeof user);               // "object" (quirk!)
+
+// Loose equality (==) treats them as equal
+console.log(null == undefined);         // true
+
+// Strict equality (===) treats them as different
+console.log(null === undefined);        // false
+
+// Key difference:
+// undefined = "no value was set"
+// null = "I intentionally set this to no value"</code></pre>
                 </section>
 
             </article>

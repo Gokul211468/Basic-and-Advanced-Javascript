@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1 â€” Basics | JavaScript Curriculum</title>
+    <title>Day 1  Basics | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -19,30 +19,85 @@
                 <p>Complete these tasks during class. Open the browser console (F12) and try each exercise.</p>
                 
                 <section>
-                    <h3>Task 1: Console Output</h3>
-                    <p>Log different types of information to the console:</p>
-                    <pre><code>console.log("Your name");
-console.log(25);
-console.log(true);
-console.log(3.14);</code></pre>
+                    <h3>Task 1: Hello, World</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Open Chrome DevTools → Console (F12 or right-click → Inspect → Console tab)</li>
+                        <li>Type <code>console.log("Hello, World!")</code> and press Enter</li>
+                        <li>Now declare a const for your name and log it</li>
+                        <li>Then log "&lt;your name&gt; is learning JS" using string concatenation with <code>+</code></li>
+                    </ul>
+                    <pre><code>console.log("Hello, World!");
+const myName = "Gokul";
+console.log(myName);
+console.log(myName + " is learning JS");</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 2: Simple Math</h3>
-                    <p>Perform basic arithmetic operations:</p>
-                    <pre><code>console.log(10 + 5);
-console.log(20 - 8);
-console.log(4 * 6);
-console.log(15 / 3);
-console.log(17 % 5);</code></pre>
+                    <h3>Task 2: let vs const</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create <code>let age = 25</code>. Log it.</li>
+                        <li>Reassign <code>age = 26</code>. Log it again. Confirm the new value.</li>
+                        <li>Create <code>const PI = 3.14</code>. Try to reassign <code>PI = 3.15</code>. Note the error.</li>
+                        <li>Create <code>let cityName</code> (no value yet). Log it. Then assign "Jaipur". Log again.</li>
+                    </ul>
+                    <pre><code>let age = 25;
+console.log(age);           // 25
+age = 26;
+console.log(age);           // 26
+
+const PI = 3.14;
+console.log(PI);            // 3.14
+// PI = 3.15;              // Error: Assignment to constant variable
+
+let cityName;
+console.log(cityName);      // undefined
+cityName = "Jaipur";
+console.log(cityName);      // Jaipur</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 3: String Concatenation</h3>
-                    <p>Join strings together:</p>
-                    <pre><code>console.log("Hello " + "World");
-console.log("I am " + 20 + " years old");
-console.log("Price: " + 100 + " rupees");</code></pre>
+                    <h3>Task 3: Block Scope</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Create a block <code>{ let x = 10; console.log(x); }</code>. Run it.</li>
+                        <li>Now try to log <code>x</code> AFTER the block. Note the error.</li>
+                        <li>Inside an <code>if (true) { ... }</code> block, declare <code>let inside = "hi"</code> and log it.</li>
+                        <li>Try logging <code>inside</code> outside the if. Note the error.</li>
+                    </ul>
+                    <pre><code>{ 
+    let x = 10; 
+    console.log(x);          // 10
+}
+// console.log(x);          // Error: x is not defined
+
+if (true) {
+    let inside = "hi";
+    console.log(inside);    // hi
+}
+// console.log(inside);    // Error: inside is not defined</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: var Pitfall</h3>
+                    <p><strong>What to observe:</strong></p>
+                    <ul>
+                        <li>Inside a <code>for (var i = 0; i &lt; 3; i++) { }</code> loop, log <code>i</code> AFTER the loop ends.</li>
+                        <li>Note that <code>i</code> is still accessible — it leaked out!</li>
+                        <li>Now do the same with <code>let i</code>. Try logging <code>i</code> after — note the error.</li>
+                        <li>In a comment, write WHY this matters.</li>
+                    </ul>
+                    <pre><code>// var leaks out of loop
+for (var i = 0; i < 3; i++) {}
+console.log(i);             // 3 (var leaks!)
+
+// let is block-scoped
+for (let j = 0; j < 3; j++) {}
+// console.log(j);         // Error: j is not defined
+
+// Why it matters: var can cause bugs because variables leak.
+// let is safer and more predictable.</code></pre>
                 </section>
 
             </article>

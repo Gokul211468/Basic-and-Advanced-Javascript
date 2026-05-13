@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 6 â€” Functions | JavaScript Curriculum</title>
+    <title>Day 6 Functions | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -17,43 +17,66 @@
                 <h2>Homework Exercises</h2>
                 
                 <section>
-                    <h3>Exercise 1: Simple Discount Calculator</h3>
-                    <pre><code>function applyDiscount(originalPrice, discountPercent) {
-  let discount = (originalPrice * discountPercent) / 100;
-  return originalPrice - discount;
+                    <h3>Exercise 1: Convert Kilometers to Miles</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>kmToMiles(km)</code></li>
+                        <li>Formula: <code>km * 0.621</code></li>
+                        <li>Test with: 10 km</li>
+                    </ul>
+                    <pre><code>function kmToMiles(km) {
+  return km * 0.621;
 }
 
-console.log(applyDiscount(1000, 10));   // â‚¹900
-console.log(applyDiscount(500, 20));    // â‚¹400</code></pre>
+console.log(kmToMiles(10));   // 6.21 miles</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Temperature Converter</h3>
-                    <pre><code>function celsiusToFahrenheit(celsius) {
-  return (celsius * 9/5) + 32;
+                    <h3>Exercise 2: GST Amount Calculator</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>gstAmount(price, rate = 18)</code></li>
+                        <li>Return the GST tax amount (not the total)</li>
+                        <li>Use a default GST rate of 18%</li>
+                        <li>Test with: price = 1000 (should use default rate)</li>
+                    </ul>
+                    <pre><code>function gstAmount(price, rate = 18) {
+  return (price * rate) / 100;
 }
 
-function fahrenheitToCelsius(fahrenheit) {
-  return (fahrenheit - 32) * 5/9;
-}
-
-console.log(celsiusToFahrenheit(25));   // 77
-console.log(fahrenheitToCelsius(68));   // 20</code></pre>
+console.log(gstAmount(1000));    // 180 (18% GST)</code></pre>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Age Category</h3>
-                    <pre><code>function getAgeCategory(age) {
-  if (age < 13) return "Child";
-  if (age < 18) return "Teenager";
-  if (age < 60) return "Adult";
-  return "Senior";
+                    <h3>Exercise 3: Full Name Concatenation</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>fullName(first, last)</code></li>
+                        <li>Return the full name as one string combining first and last names</li>
+                        <li>Test with: "Gokul" and "Krishna"</li>
+                    </ul>
+                    <pre><code>function fullName(first, last) {
+  return `${first} ${last}`;
 }
 
-console.log(getAgeCategory(10));   // Child
-console.log(getAgeCategory(15));   // Teenager
-console.log(getAgeCategory(25));   // Adult
-console.log(getAgeCategory(70));   // Senior</code></pre>
+console.log(fullName("Gokul", "Krishna"));  // Gokul Krishna</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 4: Check if Adult</h3>
+                    <p><strong>What to do:</strong></p>
+                    <ul>
+                        <li>Write a function <code>isAdult(age)</code></li>
+                        <li>Return <code>true</code> if age >= 18, otherwise <code>false</code></li>
+                        <li>Test with: age = 20</li>
+                    </ul>
+                    <pre><code>function isAdult(age) {
+  return age >= 18;
+}
+
+console.log(isAdult(20));   // true
+console.log(isAdult(15));   // false
+console.log(isAdult(18));   // true</code></pre>
                 </section>
 
             </article>
