@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8 Objects | JavaScript Curriculum</title>
+    <title>Day 8: Objects (Homework) | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
@@ -15,18 +15,13 @@
         <main class="site-content">
             <article>
                 <h2>Homework Exercises</h2>
-                
+
                 <section>
                     <h3>Exercise 1: Book with Bracket Notation and Method</h3>
-                    <p><strong>What to do:</strong></p>
-                    <ul>
-                        <li>Create an object <code>book</code> with properties: title, author, year, pages</li>
-                        <li>Log the title using bracket notation with a variable key</li>
-                        <li>Add a method <code>summary()</code> that returns "<title> by <author> (<year>)" using template literals and <code>this</code></li>
-                    </ul>
+                    <p><strong>What to do:</strong> Build an object <code>book</code> with properties: title, author, year, pages. Use bracket notation to log the title with a variable key. Add a method <code>summary()</code> that returns a formatted string using template literals and <code>this</code>.</p>
                     <pre><code>const book = {
   title: "Wings of fire",
-  author: "A P J Abdul Kalam",
+  author: "A P J Abdul Kalam", 
   year: 2018,
   pages: 320
 };
@@ -43,11 +38,7 @@ console.log(book.summary());  // Wings of fire by A P J Abdul Kalam (2018)</code
 
                 <section>
                     <h3>Exercise 2: Object.entries with forEach</h3>
-                    <p><strong>What to do:</strong></p>
-                    <ul>
-                        <li>Use <code>Object.entries()</code> to get all key-value pairs</li>
-                        <li>Use <code>forEach()</code> to print every property of the book object in "key: value" format</li>
-                    </ul>
+                    <p><strong>What to do:</strong> Use <code>Object.entries()</code> to get all key-value pairs from the book object. Use <code>forEach()</code> to print every property in "key: value" format.</p>
                     <pre><code>const book = {
   title: "Wings of fire",
   author: "A P J Abdul Kalam",
@@ -68,12 +59,7 @@ Object.entries(book).forEach(([key, value]) => {
 
                 <section>
                     <h3>Exercise 3: Copy Object with Spread Operator</h3>
-                    <p><strong>What to do:</strong></p>
-                    <ul>
-                        <li>Take the book object and copy it using the spread operator</li>
-                        <li>Modify the copy (change year and title)</li>
-                        <li>Verify the original object is unchanged</li>
-                    </ul>
+                    <p><strong>What to do:</strong> Take the book object and copy it using the spread operator. Modify the copy (change year and title). Verify the original object is unchanged.</p>
                     <pre><code>const book = {
   title: "Wings of fire",
   author: "A P J Abdul Kalam",
@@ -96,13 +82,13 @@ console.log(bookCopy);  // Copy is modified
             </article>
         </main>
 
-                <aside class="site-outline">
+        <aside class="site-outline">
             <h2>Curriculum</h2>
             <nav>
                 <ul>
                     <li><a href="../../index.html">Overview</a></li>
                     
-                    <details >
+                    <details>
                         <summary>Day 1 — Basics</summary>
                         <ul>
                             <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
@@ -111,7 +97,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 2 — Variables</summary>
                         <ul>
                             <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
@@ -120,7 +106,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 3 — Operators</summary>
                         <ul>
                             <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
@@ -129,7 +115,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 4 — Control Flow</summary>
                         <ul>
                             <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
@@ -138,7 +124,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 5 — Loops</summary>
                         <ul>
                             <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
@@ -147,7 +133,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 6 — Functions</summary>
                         <ul>
                             <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
@@ -156,7 +142,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 7 — Arrays</summary>
                         <ul>
                             <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
@@ -174,7 +160,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 9 — Modern Syntax</summary>
                         <ul>
                             <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
@@ -183,7 +169,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 10 — DOM Basics</summary>
                         <ul>
                             <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
@@ -192,7 +178,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 11 — Events</summary>
                         <ul>
                             <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
@@ -201,7 +187,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 12 — Error Handling</summary>
                         <ul>
                             <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
@@ -210,7 +196,7 @@ console.log(bookCopy);  // Copy is modified
                         </ul>
                     </details>
                     
-                    <details >
+                    <details>
                         <summary>Day 13 — Hoisting and TDZ</summary>
                         <ul>
                             <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
@@ -225,7 +211,3 @@ console.log(bookCopy);  // Copy is modified
     <script src="../js/homework.js"></script>
 </body>
 </html>
-
-
-
-
