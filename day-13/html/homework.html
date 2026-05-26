@@ -3,53 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13 ï¿½ Hoisting and TDZ | JavaScript Curriculum</title>
+    <title>Day 13: Hoisting and TDZ (Homework) | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
     <div class="page-shell">
         <header class="site-header">
             <h1>Day 13: Hoisting and TDZ</h1>
-            <p class="subtitle">Homework: Take-home Exercises</p>
+            <p class="subtitle">Homework: Take-home practice</p>
         </header>
         <main class="site-content">
             <article>
-                <h2>Homework Exercises</h2>
-                
+                <h2>Homework exercises</h2>
+                <p>Use the console and your notes. Starter code and expected reasoning are in <code>day-13/js/homework.js</code>.</p>
+
                 <section>
-                    <h3>Exercise 1: Predict Output</h3>
-                    <p>What will these snippets log? Try to predict before checking console:</p>
-                    <div id="topic1Code">
-                        <pre><code></code></pre>
-                    </div>
+                    <h3>Exercise 1: <code>typeof</code> and a hoisted <code>var</code></h3>
+                    <p><strong>What to do:</strong> Predict the output of <code>console.log(typeof age); var age = 25;</code> <em>before</em> running. Then run it and compare. Why is <code>typeof</code> on a variable you have not “assigned yet” not a <code>ReferenceError</code>?</p>
+                    <pre><code>console.log(typeof age);
+var age = 25;</code></pre>
+                    <p><strong>Answer:</strong> The console prints the string <code>"undefined"</code> (not the value <code>undefined</code> without quotes — <code>typeof</code> always returns a string). <code>var age</code> is hoisted, so at the time of <code>typeof age</code> the binding already exists with value <code>undefined</code>. That is a legal read, so you get <code>typeof undefined</code> which is <code>"undefined"</code>, not a <code>ReferenceError</code> (which would happen for a non-existent binding or for a <code>let</code>/<code>const</code> in the TDZ).</p>
                 </section>
 
                 <section>
-                    <h3>Exercise 2: Understanding TDZ</h3>
-                    <p>This code throws an error because of the Temporal Dead Zone. Can you explain why?</p>
-                    <div id="topic2Code">
-                        <pre><code></code></pre>
-                    </div>
+                    <h3>Exercise 2: Screenshot the TDZ error</h3>
+                    <p><strong>What to do:</strong> With a <code>let</code> declaration, try to read it on the line <em>above</em> its declaration. Capture a screenshot of the exact error message your console shows (name + message).</p>
+                    <pre><code>console.log(secret);
+let secret = 42;</code></pre>
+                    <p><strong>Expected answer (V8 / Chrome / Node):</strong> <code>ReferenceError: Cannot access 'secret' before initialization</code>. Your screenshot should show that name and message (wording may vary slightly in other engines).</p>
                 </section>
 
                 <section>
-                    <h3>Exercise 3: Scope Challenge</h3>
-                    <p>Understanding var vs let scope in loops and blocks:</p>
-                    <div id="topic3Code">
-                        <pre><code></code></pre>
-                    </div>
-                </section>
+                    <h3>Exercise 3: Three shapes of the same function</h3>
+                    <p><strong>What to do:</strong> Write the same simple function three ways: a function declaration, a <code>var</code> function expression, and a <code>const</code> arrow. In each case, try calling it <em>before</em> its defining line. Document which call works, which throws <code>TypeError</code>, which throws <code>ReferenceError</code>, and why.</p>
+                    <p style="font-size: 13px; color: #555;">Use a <strong>fresh file</strong> for each block below so one error does not stop the rest.</p>
+                    <pre><code>// 1) Function declaration — call before the line
+console.log(declaredHi());
+function declaredHi() {
+  return "Hi";
+}
 
+// 2) var + function expression — call before the line
+console.log(varHi());
+var varHi = function () {
+  return "Hi";
+};
+
+// 3) const + arrow — call before the line
+console.log(constHi());
+const constHi = () => "Hi";</code></pre>
+                    
+                </section>
             </article>
         </main>
 
-                <aside class="site-outline">
+        <aside class="site-outline">
             <h2>Curriculum</h2>
             <nav>
                 <ul>
                     <li><a href="../../index.html">Overview</a></li>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 1 — Basics</summary>
                         <ul>
                             <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
@@ -57,8 +71,8 @@
                             <li><a href="../../day-1/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 2 — Variables</summary>
                         <ul>
                             <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
@@ -66,8 +80,8 @@
                             <li><a href="../../day-2/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 3 — Operators</summary>
                         <ul>
                             <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
@@ -75,8 +89,8 @@
                             <li><a href="../../day-3/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 4 — Control Flow</summary>
                         <ul>
                             <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
@@ -84,8 +98,8 @@
                             <li><a href="../../day-4/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 5 — Loops</summary>
                         <ul>
                             <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
@@ -93,8 +107,8 @@
                             <li><a href="../../day-5/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 6 — Functions</summary>
                         <ul>
                             <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
@@ -102,8 +116,8 @@
                             <li><a href="../../day-6/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 7 — Arrays</summary>
                         <ul>
                             <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
@@ -111,8 +125,8 @@
                             <li><a href="../../day-7/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 8 — Objects</summary>
                         <ul>
                             <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
@@ -120,8 +134,8 @@
                             <li><a href="../../day-8/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 9 — Modern Syntax</summary>
                         <ul>
                             <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
@@ -129,8 +143,8 @@
                             <li><a href="../../day-9/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 10 — DOM Basics</summary>
                         <ul>
                             <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
@@ -138,8 +152,8 @@
                             <li><a href="../../day-10/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 11 — Events</summary>
                         <ul>
                             <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
@@ -147,8 +161,8 @@
                             <li><a href="../../day-11/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 12 — Error Handling</summary>
                         <ul>
                             <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
@@ -156,7 +170,7 @@
                             <li><a href="../../day-12/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
+
                     <details open>
                         <summary>Day 13 — Hoisting and TDZ</summary>
                         <ul>
@@ -172,7 +186,3 @@
     <script src="../js/homework.js"></script>
 </body>
 </html>
-
-
-
-

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 17: ES6 Classes (Homework) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 17: ES6 Classes</h1>
+            <p class="subtitle">Homework: Take-home Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Homework Exercises</h2>
+
+                <section>
+                    <h3>Exercise 1: Vehicle Inheritance Hierarchy</h3>
+                    <p><strong>What to do:</strong> Build a <code>Vehicle(brand)</code> class with a <code>start()</code> method. Then build <code>Car(brand, doors)</code> and <code>Bike(brand)</code> that both extend it. Override <code>start()</code> in Car to call <code>super.start()</code> then log "Car-specific check". Test both.</p>
+                    <pre><code>// Parent class
+class Vehicle {
+    constructor(brand) {
+      this.brand = brand;
+    }
+  
+    start() {
+      console.log(`${this.brand} vehicle started`);
+    }
+  }
+  
+  // Child class - Car
+  class Car extends Vehicle {
+    constructor(brand, doors) {
+      super(brand);
+      this.doors = doors;
+    }
+  
+    start() {
+      super.start();
+      console.log("Car-specific check");
+    }
+  }
+  
+  // Child class - Bike
+  class Bike extends Vehicle {
+    constructor(brand) {
+      super(brand);
+    }
+  }
+  
+  // Test Car
+  const car = new Car("Toyota", 4);
+  car.start();
+  
+  /*
+  Output:
+  Toyota vehicle started
+  Car-specific check
+  */
+  
+  // Test Bike
+  const bike = new Bike("Yamaha");
+  bike.start();
+  
+  /*
+  Output:
+  Yamaha vehicle started
+  */
+
+  /*
+  Key inheritance concepts:
+  1. extends creates prototype chain between classes
+  2. super() calls parent constructor
+  3. super.method() calls parent method (delegation)
+  4. Child classes can override and extend parent behavior
+  5. Bike inherits start() without modification
+  */</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 2: Counter with Static Tracking</h3>
+                    <p><strong>What to do:</strong> Add a static <code>count</code> to your Counter class that tracks how many counters have been created. Increment in the constructor.</p>
+                    <pre><code>class Counter {
+    // Static property
+    static count = 0;
+  
+    // Private field
+    #value = 0;
+  
+    constructor() {
+      // Increment whenever a new object is created
+      Counter.count++;
+    }
+  
+    inc() {
+      this.#value++;
+    }
+  
+    dec() {
+      if (this.#value === 0) {
+        throw new Error("Count cannot go below 0");
+      }
+  
+      this.#value--;
+    }
+  
+    get value() {
+      return this.#value;
+    }
+  }
+  
+  // Create counters
+  const c1 = new Counter();
+  const c2 = new Counter();
+  const c3 = new Counter();
+  
+  // Check static count
+  console.log(Counter.count); // 3
+  
+  // Use counters
+  c1.inc();
+  c1.inc();
+  
+  console.log(c1.value); // 2
+
+  /*
+  Static properties:
+  1. Belong to the class itself, not instances
+  2. Shared across all instances
+  3. Accessed via ClassName.property
+  4. Useful for tracking, configuration, utilities
+  5. Each constructor call increments the shared counter
+  */</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 3: Temperature Class with Validation</h3>
+                    <p><strong>What to do:</strong> Build a <code>Temperature</code> class with a private <code>#celsius</code> field and getters for <code>celsius</code> and <code>fahrenheit</code>. Add a setter for <code>celsius</code> that validates >= -273.15.</p>
+                    <pre><code>class Temperature {
+    // Private field
+    #celsius;
+  
+    constructor(celsius) {
+      this.celsius = celsius; // uses setter
+    }
+  
+    // Getter for celsius
+    get celsius() {
+      return this.#celsius;
+    }
+  
+    // Setter with validation
+    set celsius(value) {
+      if (value < -273.15) {
+        throw new Error(
+          "Temperature cannot be below absolute zero"
+        );
+      }
+  
+      this.#celsius = value;
+    }
+  
+    // Getter for fahrenheit
+    get fahrenheit() {
+      return (this.#celsius * 9) / 5 + 32;
+    }
+  }
+  
+  // Test
+  const temp = new Temperature(25);
+  
+  console.log(temp.celsius);    // 25
+  console.log(temp.fahrenheit); // 77
+  
+  // Update temperature
+  temp.celsius = 100;
+  
+  console.log(temp.celsius);    // 100
+  console.log(temp.fahrenheit); // 212
+  
+  // Invalid value
+  try {
+    temp.celsius = -300;
+  } catch (e) {
+    console.log(e.message);
+    // "Temperature cannot be below absolute zero"
+  }
+
+  /*
+  Advanced class features:
+  1. Private fields (#celsius) - truly encapsulated
+  2. Getter/setter pair - property-like access with validation
+  3. Constructor using setter - validation runs on creation too
+  4. Computed property (fahrenheit) - derived from private state
+  5. Physics validation - absolute zero is the physical minimum
+  */</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html">Hands-on</a></li>
+                            <li><a href="homework.html" aria-current="page">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Fetch API</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+    <script src="../js/homework.js"></script>
+</body>
+</html>

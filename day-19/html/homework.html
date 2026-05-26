@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 19: Async/Await (Homework) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 19: Async/Await</h1>
+            <p class="subtitle">Homework: Take-home Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Homework Exercises</h2>
+
+                <section>
+                    <h3>Exercise 1: Parallel User Fetching with Timing Comparison</h3>
+                    <p><strong>What to do:</strong> Write a <code>fetchAllUsers(ids)</code> function that takes an array of IDs and returns an array of users in PARALLEL using Promise.all + map. Time it against a sequential version to see the dramatic performance difference.</p>
+                    <pre><code>// Mock fetchUser function - simulates network delay
+function fetchUser(id) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                id: id,
+                name: `User ${id}`,
+                email: `user${id}@example.com`,
+                role: 'member'
+            });
+        }, 500);  // 500ms delay per user
+    });
+}
+
+// ✅ PARALLEL version - all requests start simultaneously
+async function fetchAllUsers(ids) {
+    const start = Date.now();
+
+    // map() creates array of Promises that all start immediately
+    const users = await Promise.all(
+        ids.map((id) => fetchUser(id))
+    );
+
+    const elapsed = Date.now() - start;
+    console.log("Parallel users:", users);
+    console.log(`Parallel time: ${elapsed}ms (should be ~500ms)`);
+    
+    return users;
+}
+
+// ❌ SEQUENTIAL version - waits for each request to complete
+async function fetchAllUsersSequential(ids) {
+    const start = Date.now();
+    const users = [];
+
+    // for...of waits for each fetchUser before starting the next
+    for (const id of ids) {
+        const user = await fetchUser(id);
+        users.push(user);
+    }
+
+    const elapsed = Date.now() - start;
+    console.log("Sequential users:", users);
+    console.log(`Sequential time: ${elapsed}ms (should be ~${ids.length * 500}ms)`);
+    
+    return users;
+}
+
+// Test with 3 users
+const userIds = [1, 2, 3];
+
+fetchAllUsers(userIds);          // ~500ms (all run in parallel)
+fetchAllUsersSequential(userIds); // ~1500ms (3 × 500ms sequential)
+
+/*
+Performance comparison:
+- Parallel: ~500ms (limited by slowest single request)
+- Sequential: ~1500ms (sum of all requests: 500 + 500 + 500)
+- Speedup: 3x faster with parallel execution!
+
+Real-world impact:
+- Fetching 10 users: 500ms vs 5000ms (10x difference!)
+- Always prefer parallel when operations are independent
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 2: Promise Timeout Helper for Resilient Applications</h3>
+                    <p><strong>What to do:</strong> Write a <code>withTimeout(promise, ms)</code> helper that returns a Promise that rejects with "timeout" if the original doesn't settle in ms. Use Promise.race internally. This prevents hanging on slow network requests.</p>
+                    <pre><code>// Universal timeout wrapper using Promise.race
+function withTimeout(promise, ms) {
+    // Create a promise that rejects after ms milliseconds
+    const timeoutPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error("timeout"));
+        }, ms);
+    });
+
+    // Race: first promise to settle (resolve/reject) wins
+    return Promise.race([promise, timeoutPromise]);
+}
+
+// Example: Slow fetchUser that might hang
+function slowFetchUser(id) {
+    return new Promise((resolve) => {
+        // Simulate variable network delay (0-3 seconds)
+        const delay = Math.random() * 3000;
+        setTimeout(() => {
+            resolve({ id, name: `User ${id}`, loadTime: delay });
+        }, delay);
+    });
+}
+
+// Test timeout with 1 second limit
+async function testTimeout() {
+    try {
+        console.log("Fetching with 1000ms timeout...");
+        
+        const user = await withTimeout(slowFetchUser(1), 1000);
+        
+        console.log("✅ Success:", user);
+        console.log(`Loaded in ${user.loadTime.toFixed(0)}ms`);
+        
+    } catch (error) {
+        if (error.message === "timeout") {
+            console.log("⏰ Request timed out after 1000ms");
+        } else {
+            console.log("❌ Other error:", error.message);
+        }
+    }
+}
+
+testTimeout();
+
+// Advanced: Timeout with cleanup
+function withTimeoutCleanup(promise, ms, cleanupFn) {
+    let timeoutId;
+    
+    const timeoutPromise = new Promise((resolve, reject) => {
+        timeoutId = setTimeout(() => {
+            if (cleanupFn) cleanupFn();  // Optional cleanup
+            reject(new Error("timeout"));
+        }, ms);
+    });
+    
+    return Promise.race([
+        promise.finally(() => clearTimeout(timeoutId)), // Clear timer on success
+        timeoutPromise
+    ]);
+}
+
+/*
+Real-world usage:
+- API requests that might hang
+- Database queries with SLA requirements  
+- File uploads with progress tracking
+- WebSocket connection attempts
+
+Benefits:
+- Prevents infinite waiting
+- Improves user experience
+- Enables fallback strategies
+- Essential for production reliability
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 3: Sequential Waits with Order Verification</h3>
+                    <p><strong>What to do:</strong> Write an async function that loops with for...of over [300, 100, 200] and waits each amount in ms, logging when each finishes. Confirm the order is the input order, not the timing order.</p>
+                    <pre><code>// Helper function to wait/delay
+function wait(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+// Sequential waits - order preserved regardless of individual timing
+async function runSequentialWaits() {
+    const times = [300, 100, 200];  // Different delays
+    
+    console.log("🚀 Starting sequential waits...");
+    const startTime = Date.now();
+
+    for (const ms of times) {
+        const stepStart = Date.now();
+        
+        await wait(ms);  // Wait for this specific duration
+        
+        const stepElapsed = Date.now() - stepStart;
+        const totalElapsed = Date.now() - startTime;
+        
+        console.log(
+            `✅ Finished ${ms}ms wait ` +
+            `(actually took ${stepElapsed}ms, ` + 
+            `total elapsed: ${totalElapsed}ms)`
+        );
+    }
+    
+    const totalTime = Date.now() - startTime;
+    console.log(`🎯 All waits completed in ${totalTime}ms`);
+    console.log(`📊 Expected total: ${300 + 100 + 200} = 600ms`);
+}
+
+// Contrast: What if we did this in parallel?
+async function runParallelWaits() {
+    const times = [300, 100, 200];
+    
+    console.log("\n🚀 Starting parallel waits for comparison...");
+    const startTime = Date.now();
+    
+    // All waits start immediately
+    const results = await Promise.all(
+        times.map(async (ms, index) => {
+            await wait(ms);
+            const elapsed = Date.now() - startTime;
+            return { 
+                originalMs: ms, 
+                index, 
+                completedAt: elapsed 
+            };
+        })
+    );
+    
+    // Results come back in original order, but completion times vary
+    results.forEach(result => {
+        console.log(
+            `✅ ${result.originalMs}ms wait completed at ${result.completedAt}ms ` +
+            `(index ${result.index})`
+        );
+    });
+    
+    const totalTime = Date.now() - startTime;
+    console.log(`🎯 All parallel waits completed in ${totalTime}ms`);
+    console.log(`📊 Expected total: ~${Math.max(...times)}ms (longest wait)`);
+}
+
+// Run both examples
+runSequentialWaits();
+
+setTimeout(() => {
+    runParallelWaits();
+}, 1000);
+
+/*
+Expected Output:
+
+Sequential:
+✅ Finished 300ms wait (actually took 301ms, total elapsed: 301ms)
+✅ Finished 100ms wait (actually took 101ms, total elapsed: 402ms)  
+✅ Finished 200ms wait (actually took 201ms, total elapsed: 603ms)
+🎯 All waits completed in 603ms
+📊 Expected total: 600ms
+
+Parallel:
+✅ 100ms wait completed at 101ms (index 1)  ← fastest completes first
+✅ 200ms wait completed at 201ms (index 2)  
+✅ 300ms wait completed at 301ms (index 0)  ← slowest completes last
+🎯 All parallel waits completed in 301ms
+📊 Expected total: ~300ms (longest wait)
+
+Key insights:
+1. for...of preserves order regardless of individual timing
+2. Sequential: total time = sum of all operations  
+3. Parallel: total time = longest single operation
+4. Choose based on dependencies: sequential for dependent operations, parallel for independent ones
+*/</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html">Hands-on</a></li>
+                            <li><a href="homework.html" aria-current="page">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+    <script src="../js/homework.js"></script>
+</body>
+</html>

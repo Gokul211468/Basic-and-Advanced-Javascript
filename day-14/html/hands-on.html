@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14: Closures and Scope (Hands-on) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 14: Closures and Scope</h1>
+            <p class="subtitle">Hands-on: Guided Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Hands-on Exercises</h2>
+
+                <section>
+                    <h3>Task 1: Build a Counter</h3>
+                    <p><strong>What to do:</strong> Write a function <code>makeCounter()</code> that returns a function. The returned function, each time it is called, returns the next integer starting from 1. Create TWO independent counters with <code>makeCounter()</code> and verify they don't interfere. In a comment, explain WHERE the count variable lives between calls.</p>
+                    <pre><code>function makeCounter() {
+    let count = 0; // private variable
+  
+    return function () {
+      count++;
+      return count;
+    };
+  }
+  
+  // Create first counter
+  const counter1 = makeCounter();
+  
+  // Create second counter
+  const counter2 = makeCounter();
+  
+  console.log(counter1()); // 1
+  console.log(counter1()); // 2
+  console.log(counter1()); // 3
+  
+  console.log(counter2()); // 1
+  console.log(counter2()); // 2
+  
+  console.log(counter1()); // 4
+
+/*
+WHERE does the count variable live?
+
+The count variable lives in the closure created by makeCounter().
+Each time makeCounter() is called, it creates a NEW execution context
+with its own count variable. The returned function "closes over" this
+count variable, keeping it alive even after makeCounter() finishes.
+
+This is why counter1 and counter2 are completely independent - they
+each have their own separate count variable in their own closure.
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 2: Fix the var-in-Loop Bug</h3>
+                    <p><strong>What to do:</strong> Type this snippet exactly: <code>for (var i = 1; i <= 3; i++) { setTimeout(() => console.log(i), 100); }</code>. Predict the output. Run it. Note the actual output. Fix it by changing ONE keyword. Run again, verify it logs 1, 2, 3. In a comment, explain why var produced the surprising output and let fixes it.</p>
+                    <pre><code>// Original code
+for (var i = 1; i <= 3; i++) {
+    setTimeout(() => console.log(i), 100);
+  }
+  
+  /*
+  Predicted output by many people:
+  1
+  2
+  3
+  
+  Actual output after running:
+  4
+  4
+  4
+  
+  Why?
+  
+  - var is function-scoped, so the loop creates only ONE shared variable: i
+  - setTimeout runs later, after the loop has already finished
+  - by the time callbacks execute, i has become 4
+  - all callbacks reference the same i variable
+  */
+
+// Fixed version
+for (let i = 1; i <= 3; i++) {
+    setTimeout(() => console.log(i), 100);
+  }
+  
+  /*
+  Output:
+  1
+  2
+  3
+  
+  Why does let fix it?
+  
+  - let is block-scoped
+  - in a for loop, JavaScript creates a NEW i for each iteration
+  - each callback closes over its own separate i value
+  - therefore callbacks remember:
+    first callback  -> 1
+    second callback -> 2
+    third callback  -> 3
+  */</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Private Bank Balance</h3>
+                    <p><strong>What to do:</strong> Write a function <code>createAccount(initial)</code> that returns an object with three methods: <code>deposit(amount)</code>, <code>withdraw(amount)</code>, <code>getBalance()</code>. <code>balance</code> must be PRIVATE — not accessible as <code>account.balance</code>. Test with: open an account with 1000, deposit 500, withdraw 200, log the balance. Verify <code>account.balance</code> is undefined.</p>
+                    <pre><code>function createAccount(initial) {
+    // private variable
+    let balance = initial;
+  
+    return {
+      deposit(amount) {
+        balance += amount;
+      },
+  
+      withdraw(amount) {
+        balance -= amount;
+      },
+  
+      getBalance() {
+        return balance;
+      }
+    };
+  }
+  
+  // Open account with 1000
+  const account = createAccount(1000);
+
+  // Deposit 500
+  account.deposit(500);
+  
+  // Withdraw 200
+  account.withdraw(200);
+  
+  // Log balance
+  console.log(account.getBalance()); // 1300
+  
+  // Verify balance is private
+  console.log(account.balance); // undefined
+
+/*
+The balance variable is truly private because:
+1. It lives in the closure created by createAccount()
+2. Only the returned methods (deposit, withdraw, getBalance) have access to it
+3. External code cannot access balance directly
+4. This demonstrates encapsulation using closures
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: Build a Memoizer</h3>
+                    <p><strong>What to do:</strong> Write a function <code>memoize(fn)</code> that returns a new function caching results of <code>fn</code> by argument value. Use it to wrap an <code>expensiveSquare(n)</code> that logs "computing..." and returns n * n. Call the memoized version with 5 twice, then 10 once, then 5 again. Note when the log fires. In a comment, explain where the cache lives.</p>
+                    <pre><code>function memoize(fn) {
+    // private cache
+    const cache = {};
+  
+    return function (arg) {
+      // if result already exists, return cached value
+      if (cache[arg] !== undefined) {
+        return cache[arg];
+      }
+  
+      // otherwise compute and store
+      const result = fn(arg);
+      cache[arg] = result;
+  
+      return result;
+    };
+  }
+  
+  // Expensive function
+  function expensiveSquare(n) {
+    console.log("computing...");
+    return n * n;
+  }
+  
+  // Create memoized version
+  const memoizedSquare = memoize(expensiveSquare);
+  
+  // Calls
+  console.log(memoizedSquare(5));  // computing... 25
+  console.log(memoizedSquare(5));  // 25 (no "computing..." log)
+  
+  console.log(memoizedSquare(10)); // computing... 100
+  console.log(memoizedSquare(5));  // 25 (still cached, no log)
+
+/*
+WHERE does the cache live?
+
+The cache object lives in the closure created by memoize().
+When memoize(expensiveSquare) is called, it creates a new execution
+context with its own cache object. The returned function closes over
+this cache, keeping it alive and accessible across multiple calls.
+
+Each time we call memoize(), we get a fresh cache. So if we created
+another memoized function, it would have its own separate cache.
+*/</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html" aria-current="page">Hands-on</a></li>
+                            <li><a href="homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — Modules</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — Promise Methods</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Fetch API</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+    <script src="../js/hands-on.js"></script>
+</body>
+</html>

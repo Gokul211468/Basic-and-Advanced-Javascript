@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 16: Prototypes and the Prototype Chain (Homework) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 16: Prototypes and the Prototype Chain</h1>
+            <p class="subtitle">Homework: Take-home Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Homework Exercises</h2>
+
+                <section>
+                    <h3>Exercise 1: Three-level Chain with Object.create</h3>
+                    <p><strong>What to do:</strong> Use <code>Object.create</code> to build a 3-level chain: <code>tool → vehicle → car</code>. Each level adds one method. Confirm a car instance can call all three methods.</p>
+                    <pre><code>const tool = {
+    repair() {
+      console.log("Repairing...");
+    },
+  };
+  
+  const vehicle = Object.create(tool);
+  
+  vehicle.start = function () {
+    console.log("Starting...");
+  };
+  
+  const car = Object.create(vehicle);
+  
+  car.drive = function () {
+    console.log("Driving...");
+  };
+  
+  car.drive();   // Driving...  (own method)
+  car.start();   // Starting... (from vehicle prototype) 
+  car.repair();  // Repairing... (from tool prototype)
+
+  /*
+  Prototype chain:
+  car → vehicle → tool → Object.prototype → null
+  
+  Each level adds functionality:
+  - tool: repair capability
+  - vehicle: start capability + repair (inherited)
+  - car: drive capability + start + repair (inherited)
+  
+  This demonstrates how Object.create builds inheritance chains
+  */</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 2: Shape/Circle Constructor Inheritance</h3>
+                    <p><strong>What to do:</strong> Build a <code>Shape(name)</code> constructor with a <code>describe()</code> method on the prototype. Then build <code>Circle(name, radius)</code> that inherits from <code>Shape</code> and adds an <code>area()</code> method. Test with a Circle of name "C1" and radius 5.</p>
+                    <pre><code>function Shape(name) {
+    this.name = name;
+  }
+  
+  Shape.prototype.describe = function () {
+    console.log("Shape name is " + this.name);
+  };
+  
+  function Circle(name, radius) {
+    Shape.call(this, name);  // Call parent constructor
+    this.radius = radius;
+  }
+  
+  // Set up inheritance
+  Circle.prototype = Object.create(Shape.prototype);
+  Circle.prototype.constructor = Circle;
+  
+  Circle.prototype.area = function () {
+    console.log(Math.PI * this.radius * this.radius);
+  };
+  
+  const c1 = new Circle("C1", 5);
+  
+  c1.describe(); // "Shape name is C1" (inherited from Shape)
+  c1.area();     // 78.53981633974483 (own to Circle)
+
+  /*
+  Inheritance pattern:
+  1. Shape.call(this, name) - borrows Shape constructor
+  2. Circle.prototype = Object.create(Shape.prototype) - sets up prototype chain
+  3. Circle.prototype.constructor = Circle - maintains constructor reference
+  4. Circle instances can access both Shape and Circle methods
+  
+  This is the classical inheritance pattern in pre-ES6 JavaScript
+  */</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 3: Inspect Built-in Prototypes</h3>
+                    <p><strong>What to do:</strong> Take any built-in prototype (e.g. <code>String.prototype</code>) and inspect it in the console. Find five methods you didn't know about. Document one with a code example.</p>
+                    <pre><code>console.log(String.prototype);
+
+// Some less commonly noticed String methods:
+//
+// 1. at() - access character at index (supports negative)
+// 2. padStart() - pad string to length from start
+// 3. padEnd() - pad string to length from end
+// 4. matchAll() - find all matches of a regex
+// 5. normalize() - normalize Unicode representation
+
+// Example using at()
+const str = "JavaScript";
+
+console.log(str.at(2));   // "v" - character at index 2
+console.log(str.at(-1));  // "t" - last character
+console.log(str.at(-2));  // "p" - second to last
+
+// Why at() is useful:
+// - Supports negative indices (like Python)
+// - More intuitive than str[str.length - 1] for last character
+// - Returns undefined for out-of-bounds (rather than empty string)
+
+/*
+Built-in prototypes are treasure troves of functionality:
+- String.prototype: 50+ methods for text manipulation
+- Array.prototype: 40+ methods for array operations  
+- Object.prototype: Base methods all objects inherit
+- Number.prototype: Methods for number formatting/conversion
+- Date.prototype: Methods for date/time manipulation
+
+Exploring these helps you write more idiomatic JavaScript!
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 4: chainOf(obj) Function</h3>
+                    <p><strong>What to do:</strong> Write a function <code>chainOf(obj)</code> that returns an array of every prototype in <code>obj</code>'s chain, ending at the prototype just before <code>null</code>.</p>
+                    <pre><code>function chainOf(obj) {
+    const chain = [];
+  
+    let current = Object.getPrototypeOf(obj);
+  
+    while (current !== null) {
+      chain.push(current);
+      current = Object.getPrototypeOf(current);
+    }
+  
+    return chain;
+  }
+  
+  const arr = [1, 2, 3];
+  
+  console.log(chainOf(arr));
+  
+  /*
+  Output:
+  [
+    Array.prototype,    // Has push, pop, forEach, etc.
+    Object.prototype    // Has toString, hasOwnProperty, etc.
+  ]
+  */
+
+  // Test with different objects
+  const obj = {};
+  console.log(chainOf(obj));        // [Object.prototype]
+  
+  const date = new Date();
+  console.log(chainOf(date));       // [Date.prototype, Object.prototype]
+  
+  function MyClass() {}
+  const instance = new MyClass();
+  console.log(chainOf(instance));   // [MyClass.prototype, Object.prototype]
+
+  /*
+  This function demonstrates:
+  1. How to traverse the prototype chain programmatically
+  2. The while loop pattern for chain walking
+  3. Different objects have different chain lengths
+  4. All chains end at Object.prototype (unless specifically created with null)
+  
+  Real-world usage: debugging inheritance issues, understanding method resolution
+  */</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html">Hands-on</a></li>
+                            <li><a href="homework.html" aria-current="page">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — Promise Methods</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Fetch API</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+    <script src="../js/homework.js"></script>
+</body>
+</html>

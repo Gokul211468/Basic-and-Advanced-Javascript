@@ -1,155 +1,200 @@
-// // 1. Counter — private state
-// function makeCounter() {
-// let count = 0; // private — cannot be reached from outside
-// return function () {
-// count++; // each call mutates the SAME closed-over count
-// return count;
-// };
-// }
-// const c = makeCounter();
-// console.log(c()); // 1
-// console.log(c()); // 2
-// console.log(c()); // 3
-
-// // console.log(count) // ReferenceError — count is private to the closure
-
-
-// // 2. Private variables — bank account
-// function createAccount(initial) {
-// let balance = initial; // PRIVATE — no one outside can touch it
-// return {
-// deposit: (amt) => balance += amt,
-// withdraw: (amt) => balance -= amt,
-// getBalance: () => balance,
-// };
-// }
-// const acc = createAccount(1000);
-// acc.deposit(500);
-// console.log(acc.getBalance()); // 1500
-// // acc.balance // undefined — truly private
-
-
-// // 3. Memoization — cache expensive results
-// function memoize(fn) {
-// const cache = {}; // closed-over cache, lives across calls
-// return function (n) {
-// if (n in cache) return cache[n]; // hit → return cached
-// cache[n] = fn(n); // miss → compute and store
-// return cache[n];
-// };
+// // Create a new post using Async/Await
+// async function createNewPost() {
+//   try {
+//     const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         title: 'My New Post',
+//         body: 'This is the content of my post',
+//         userId: 1
+//       })
+//     });
+    
+//     const newPost = await response.json();
+//     console.log('Post created with ID:', newPost.id);
+//     console.log('New post:', newPost);
+//   } catch (error) {
+//     console.error('Failed to create post:', error);
+//   }
 // }
 
-// const slowSquare = (n) => { console.log("computing..."); return n * n; };
-// const fastSquare = memoize(slowSquare);
-// fastSquare(5); // "computing..." → 25
-// fastSquare(5); // 25 (no log — served from cache)
+// createNewPost();
+
+// // // Fetch user and their posts using Async/Await
+// // async function fetchUserWithPosts(userId) {
+// //   try {
+// //     // Fetch user data
+// //     const userResponse = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
+// //     if (!userResponse.ok) throw new Error('User not found');
+// //     const user = await userResponse.json();
+    
+// //     // Fetch user's posts
+// //     const postsResponse = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}/posts`);
+// //     const posts = await postsResponse.json();
+    
+// //     console.log(`User: ${user.name} (${user.email})`);
+// //     console.log(`Number of posts: ${posts.length}`);
+// //     console.log('First post title:', posts[0]?.title);
+    
+// //     return { user, posts };
+// //   } catch (error) {
+// //     console.error('Error:', error.message);
+// //   }
+// // }
+
+// // fetchUserWithPosts(1);
+
+// // // Fetch a single post using Promises
+// // function fetchPostWithPromise(postId) {
+// //   fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+// //     .then(response => {
+// //       if (!response.ok) {
+// //         throw new Error(`HTTP error! status: ${response.status}`);
+// //       }
+// //       return response.json();
+// //     })
+// //     .then(post => {
+// //       console.log('Post:', post.title);
+// //       console.log('Content:', post.body);
+// //     })
+// //     .catch(error => {
+// //       console.error('Error fetching post:', error.message);
+// //     });
+// // }
+
+// // fetchPostWithPromise(1);
 
 
-// // Basic IIFE — runs once, creates a private scope
-// (function () {
-// const secret = "hidden"; // not visible outside
-// console.log("IIFE ran");
-// })();
-
-// // IIFE with parameters
-// (function (city) {
-// console.log(`Greetings from ${city}`);
-// })("Jaipur");
-
-// // Arrow IIFE (modern)
-// (() => {
-// const x = 42;
-// console.log(x);
-// })();
-
-
-// function makeCounter() {
-//   let count = 0;
-
-//   return function () {
-//     count++;
-//     return count;
-//   };
+// function makingGetRequest(userId){
+//     fetch(`https://jsonplaceholder.typicode.com/todos/${userId}`)
+//     .then((response) => {
+//         return response.json();
+//     })
+//     .then((data) => {
+//         console.log(data);
+//     })
+//     .catch((error) => {
+//         console.log("Error:", error);
+//     });
 // }
 
-// const counter1 = makeCounter();
-// const counter2 = makeCounter();
+// makingGetRequest(1)
 
-// console.log(counter1()); // 1
-// console.log(counter1()); // 2
-// console.log(counter1()); // 3
-
-// console.log(counter2()); // 1
-// console.log(counter2()); // 2
-
-
-
-// function whoAmI() {
-// console.log(this);
+// async function request() {
+//     try{
+//         const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+//         const data = await response.json()
+//         console.log(data)
+//     }
+//     catch(error){
+//         console.log(`Error: ${error}`)
+//     }
 // }
-// whoAmI();
 
-// const user = { name: "Priya", whoAmI };
-// user.whoAmI(); // logs the user object — called as a method
+// request()
 
-// const other = { name: "Aarav", whoAmI };
-// other.whoAmI(); 
 
-// function greet(city, lang) {
-// console.log(`${this.name} from ${city} speaks ${lang}`);
+// function fetchProduct(id) {
+//   return new Promise((res) => setTimeout(() => res({ id, price: 100 }), 1000));
 // }
-// const u = { name: "Priya" };
-// // call — invoke now, args listed
-// greet.call(u, "Jaipur", "Hindi"); // "Priya from Jaipur speaks Hindi"
 
+// const ids = [1, 2, 3];
 
-// // apply — invoke now, args as array
-// greet.apply(u, ["Jaipur", "Hindi"]); // same output
-// // bind — returns a new function for later
-// const greetPriya = greet.bind(u, "Jaipur"); // partially applied: city pre-set
-// greetPriya("English"); // "Priya from Jaipur speaks English"
-// greetPriya("Marathi"); // "Priya from Jaipur speaks Marathi"
-// // Once bound, this CANNOT be re-bound
-// greetPriya.call({ name: "Aarav" }, "Tamil"); // still "Priya from Jaipur speaks Tamil"
+// // BUG — finishes before any fetch completes
+// async function bug() {
+//   console.log("start");
+//   ids.forEach(async (id) => {
+//     const p = await fetchProduct(id);     // Promise returned but ignored by forEach
+//     console.log("got", p);
+//   });
+//   console.log("end");                     // logs BEFORE any "got"
+// }
 
+// // FIX 1 — for...of (sequential)
+// async function sequential() {
+//   console.log("start");
+//   for (const id of ids) {
+//     const p = await fetchProduct(id);
+//     console.log("got", p);
+//   }
+//   console.log("end");                     // logs AFTER all "got"
+// }
+
+// // FIX 2 — Promise.all + map (parallel, preferred)
+// async function parallel() {
+//   console.log("start");
+//   const results = await Promise.all(
+//     ids.map((id) => fetchProduct(id)),    // each returns a Promise; map collects them
+//   );
+//   results.forEach((p) => console.log("got", p));
+//   console.log("end");
+// }
+
+// bug();
+// //sequential();
 
 // const user = {
-// name: "Priya",// Regular function — has its own this
-// regular: function () {
-// console.log(this.name); // "Priya" ← implicit binding
-// const arrow = ()=>{console.log(this.name)}
-// arrow();
-// },
-// // Arrow — no own this; inherits from enclosing scope (here: module/global)
-// arrow: () => {
-// console.log(this.name); // undefined ← arrow doesn't see user as this
-// },
+//   name: "Priya",
+//   age: 25,
+//   address: { place:{city: "Jaipur", pin: 302001 }},
+//   hobbies: ["reading", "trekking"],
 // };
-// user.regular(); // "Priya"
-// user.arrow(); // undefined ← surprise! arrow as a method is usually wrong
+
+// const user1 = {
+//   ...user,
+//   address: {
+//     ...user.address,
+//     place: {
+//       ...user.address.place,
+//       city: "Mumbai"
+//     }
+//   }
+// };
+
+// console.log(user.address.place.city)
+// console.log(user1.address.place.city)
 
 
-// Task 1 Predict the `this`
-// Type the following snippet exactly: a user object with name: "Priya" and a method greet()
-// { console.log(this.name); } . Then call user.greet() . Then assign const g =
-// user.greet and call g() .
-// Predict the output of each call BEFORE running.
-// Run. Note actual output.
-// In a comment, explain why the second call lost the this .
+// Manually using an array's iterator
+const arr = ["a", "b", "c"];
+console.log(arr)
+const it  = arr[Symbol.iterator]();        // get the iterator object
+console.log(it)
+console.log(it.next());    // { value: "a", done: false }
+console.log(it.next());    // { value: "b", done: false }
+console.log(it.next());    // { value: "c", done: false }
+console.log(it.next());    // { value: undefined, done: true }
 
-// Task 1: Predict the value of this in different function calls
+// for...of is sugar over this protocol:
+for (const ch of arr) {
+  console.log(ch);
+}
+// Internally: while not done → { value, done } = it.next() → use value
 
+const range = {
+  from: 1,
+  to: 5,
 
+  [Symbol.iterator]() {
+    let current = this.from;
+    const last = this.to;
 
-
-const user = {
-  name: "Priya",
-  greet: function () {
-    console.log(this.name);
+    return {
+      next() {
+        if (current <= last) {
+          return { value: current++, done: false };
+        }
+        return { value: undefined, done: true };
+      },
+    };
   },
 };
 
-user.greet(); 
-const g = user.greet;
-g(); 
-
+// Now range works with for...of, spread, destructuring
+for (const n of range) console.log(n);    // 1, 2, 3, 4, 5
+console.log([...range]);                  // [1, 2, 3, 4, 5]
+const [first, ...rest] = range;
+console.log(first, rest);                 // 1 [2, 3, 4, 5]

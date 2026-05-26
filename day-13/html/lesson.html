@@ -3,53 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13 â€” Hoisting and TDZ | JavaScript Curriculum</title>
+    <title>Day 13: Hoisting and TDZ | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
-
 <body>
     <div class="page-shell">
         <header class="site-header">
             <h1>Day 13: Hoisting and TDZ</h1>
-            <p class="subtitle">Lesson: Topics and Demo Code</p>
+            <p class="subtitle">Lesson: Topics and demo code (check the console)</p>
         </header>
 
         <main class="site-content">
             <article>
-                <h2>Hoisting & Temporal Dead Zone</h2>
-                <p>Understanding how JavaScript hoists declarations and the Temporal Dead Zone concept.</p>
-                
+                <h2>Execution context, hoisting, TDZ, and the call stack</h2>
+                <p>Open DevTools <strong>Console</strong> to see the live demos from <code>lesson.js</code>. The panels below mirror the same ideas as readable snippets.</p>
+
                 <section>
-                    <h3>Hoisting with var</h3>
+                    <h3>Topic 1: Global vs function execution context and <code>var</code></h3>
+                    <p>Global bindings live in the script’s outer execution context. Each function call gets its own function context (parameters, locals). <code>var</code> is function-scoped and hoisted with an initial value of <code>undefined</code>.</p>
                     <div id="topic1Code">
                         <pre><code></code></pre>
                     </div>
                 </section>
 
                 <section>
-                    <h3>Hoisting with let and const</h3>
+                    <h3>Topic 2: Creation vs execution phase, <code>let</code>/<code>const</code>, and the TDZ</h3>
+                    <p>Think of two phases: create bindings, then run statements top to bottom. <code>let</code> and <code>const</code> are in the temporal dead zone (TDZ) until their declaration line runs; reading them earlier throws <code>ReferenceError</code>.</p>
                     <div id="topic2Code">
                         <pre><code></code></pre>
                     </div>
                 </section>
 
                 <section>
-                    <h3>Function Hoisting</h3>
+                    <h3>Topic 3: Call stack, declarations vs expressions</h3>
+                    <p>Nested calls build a <strong>call stack</strong>: each call pushes a frame; returning pops it. Function <strong>declarations</strong> hoist differently from <strong>expressions</strong> stored in <code>var</code> or <code>let</code>/<code>const</code>.</p>
                     <div id="topic3Code">
                         <pre><code></code></pre>
                     </div>
                 </section>
-
             </article>
         </main>
 
-                <aside class="site-outline">
+        <aside class="site-outline">
             <h2>Curriculum</h2>
             <nav>
                 <ul>
                     <li><a href="../../index.html">Overview</a></li>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 1 — Basics</summary>
                         <ul>
                             <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
@@ -57,8 +58,8 @@
                             <li><a href="../../day-1/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 2 — Variables</summary>
                         <ul>
                             <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
@@ -66,8 +67,8 @@
                             <li><a href="../../day-2/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 3 — Operators</summary>
                         <ul>
                             <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
@@ -75,8 +76,8 @@
                             <li><a href="../../day-3/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 4 — Control Flow</summary>
                         <ul>
                             <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
@@ -84,8 +85,8 @@
                             <li><a href="../../day-4/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 5 — Loops</summary>
                         <ul>
                             <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
@@ -93,8 +94,8 @@
                             <li><a href="../../day-5/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 6 — Functions</summary>
                         <ul>
                             <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
@@ -102,8 +103,8 @@
                             <li><a href="../../day-6/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 7 — Arrays</summary>
                         <ul>
                             <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
@@ -111,8 +112,8 @@
                             <li><a href="../../day-7/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 8 — Objects</summary>
                         <ul>
                             <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
@@ -120,8 +121,8 @@
                             <li><a href="../../day-8/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 9 — Modern Syntax</summary>
                         <ul>
                             <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
@@ -129,8 +130,8 @@
                             <li><a href="../../day-9/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 10 — DOM Basics</summary>
                         <ul>
                             <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
@@ -138,8 +139,8 @@
                             <li><a href="../../day-10/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 11 — Events</summary>
                         <ul>
                             <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
@@ -147,8 +148,8 @@
                             <li><a href="../../day-11/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 12 — Error Handling</summary>
                         <ul>
                             <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
@@ -156,7 +157,7 @@
                             <li><a href="../../day-12/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
+
                     <details open>
                         <summary>Day 13 — Hoisting and TDZ</summary>
                         <ul>
@@ -172,6 +173,3 @@
     <script src="../js/lesson.js"></script>
 </body>
 </html>
-
-
-

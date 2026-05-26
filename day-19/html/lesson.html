@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 19: Async/Await (Lesson) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 19: Async/Await</h1>
+            <p class="subtitle">Lesson: Understanding Async/Await Fundamentals</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Async/Await: Making Promises Easier to Read</h2>
+
+                <section>
+                    <h3>Topic 1: async Always Returns a Promise</h3>
+                    <p><strong>Key Concept:</strong> Any function marked with <code>async</code> automatically returns a Promise, even if you return a plain value. This is syntactic sugar over Promise.resolve().</p>
+                    <pre><code>async function greet() {
+  return "Namaste";                    // plain return value — but...
+}
+
+const result = greet();
+console.log(result);                   // Promise { "Namaste" }   ← it's a Promise!
+
+result.then((msg) => console.log(msg));   // "Namaste"
+
+// Equivalent without async sugar:
+function greetOld() {
+  return Promise.resolve("Namaste");
+}</code></pre>
+                </section>
+
+                <section>
+                    <h3>Topic 2: await Pauses the async Function</h3>
+                    <p><strong>Key Concept:</strong> <code>await</code> pauses the execution of an async function until the Promise resolves, making asynchronous code read like synchronous code. It can only be used inside async functions.</p>
+                    <pre><code>function fetchUser(id) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({ id, name: "Priya" }), 500);
+  });
+}
+
+// .then style
+function withThen() {
+  fetchUser(7).then((user) => {
+    console.log("got:", user);
+  });
+}
+
+// async/await style — reads like sync code
+async function withAwait() {
+  const user = await fetchUser(7);     // pause here for ~500ms
+  console.log("got:", user);            // then continue
+}
+withAwait();</code></pre>
+                </section>
+
+                <section>
+                    <h3>Topic 3: try/catch for Async Errors</h3>
+                    <p><strong>Key Concept:</strong> Use try/catch blocks to handle rejected promises in async functions. This replaces the need for .catch() chains and provides familiar error handling syntax.</p>
+                    <pre><code>function fetchUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id < 0) reject(new Error("Bad id"));
+      else        resolve({ id, name: "Priya" });
+    }, 300);
+  });
+}
+
+async function showUser(id) {
+  try {
+    const user = await fetchUser(id);
+    console.log("got:", user);
+  } catch (err) {
+    console.error("failed:", err.message);
+  } finally {
+    console.log("done");
+  }
+}
+
+showUser(7);     // got: { id: 7, name: "Priya" } / done
+showUser(-1);    // failed: Bad id                / done</code></pre>
+                </section>
+
+                <section>
+                    <h3>Topic 4: Sequential vs Parallel Execution</h3>
+                    <p><strong>Key Concept:</strong> Understanding when operations run one after another vs simultaneously can dramatically affect performance. Use Promise.all for parallel execution.</p>
+                    <pre><code>function fetchProduct(id) {
+  return new Promise((res) => setTimeout(() => res({ id, price: 100 }), 1000));
+}
+
+// SLOW — sequential (3 seconds total)
+async function slow() {
+  const t0 = Date.now();
+  const a = await fetchProduct(1);     // wait 1s
+  const b = await fetchProduct(2);     // then wait 1s more
+  const c = await fetchProduct(3);     // then wait 1s more
+  console.log(`Took ${Date.now() - t0}ms`);   // ~3000ms
+}
+
+// FAST — parallel (1 second total)
+async function fast() {
+  const t0 = Date.now();
+  const [a, b, c] = await Promise.all([   // all three start IMMEDIATELY
+    fetchProduct(1),
+    fetchProduct(2),
+    fetchProduct(3),
+  ]);
+  console.log(`Took ${Date.now() - t0}ms`);   // ~1000ms
+}</code></pre>
+                </section>
+
+                <section>
+                    <h3>Topic 5: The forEach Trap</h3>
+                    <p><strong>Common Mistake:</strong> Using <code>forEach</code> with async functions doesn't wait for completion. The main function finishes before any async operations complete because forEach doesn't understand Promises.</p>
+                    <pre><code>const ids = [1, 2, 3];
+
+// BUG — finishes before any fetch completes
+async function bug() {
+  console.log("start");
+  ids.forEach(async (id) => {
+    const p = await fetchProduct(id);     // Promise returned but ignored by forEach
+    console.log("got", p);
+  });
+  console.log("end");                     // logs BEFORE any "got"
+}
+
+// FIX 1 — for...of (sequential)
+async function sequential() {
+  console.log("start");
+  for (const id of ids) {
+    const p = await fetchProduct(id);
+    console.log("got", p);
+  }
+  console.log("end");                     // logs AFTER all "got"
+}
+
+// FIX 2 — Promise.all + map (parallel, preferred)
+async function parallel() {
+  console.log("start");
+  const results = await Promise.all(
+    ids.map((id) => fetchProduct(id)),    // each returns a Promise; map collects them
+  );
+  results.forEach((p) => console.log("got", p));
+  console.log("end");
+}</code></pre>
+                </section>
+
+                <section>
+                    <h3>Topic 6: Top-Level await</h3>
+                    <p><strong>Key Concept:</strong> Top-level await allows you to use await outside of async functions in ES modules. For regular scripts, wrap in an IIFE (Immediately Invoked Function Expression).</p>
+                    <pre><code>// In an ES module (e.g., main.js with type="module" or .mjs)
+const response = await fetch("/api/config");
+const config = await response.json();
+
+console.log("Config loaded:", config);
+
+// In a regular script — TOP-LEVEL await is a SyntaxError.
+// Always wrap in an IIFE-like async function for legacy contexts:
+(async () => {
+  const r = await fetch("/api/config");
+  const c = await r.json();
+  console.log(c);
+})();</code></pre>
+                </section>
+
+                <section>
+                    <h3>Topic 7: Mixing with .then</h3>
+                    <p><strong>Key Concept:</strong> Async functions return Promises, so they can be consumed using either .then() or await. This allows gradual migration from Promise chains to async/await.</p>
+                    <pre><code>async function getUserName(id) {
+  const user = await fetchUser(id);
+  return user.name;                    // returns inside async = resolved value
+}
+
+// Caller can use either style
+getUserName(7).then((name) => console.log(name));   // .then-style call
+
+(async () => {
+  const name = await getUserName(7);                // await-style call
+  console.log(name);
+})();</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="lesson.html" aria-current="page">Lesson</a></li>
+                            <li><a href="hands-on.html">Hands-on</a></li>
+                            <li><a href="homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+    <script src="../js/lesson.js"></script>
+</body>
+</html>

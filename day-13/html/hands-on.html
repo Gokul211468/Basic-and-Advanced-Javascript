@@ -3,53 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13 â€” Hoisting and TDZ | JavaScript Curriculum</title>
+    <title>Day 13: Hoisting and TDZ (Hands-on) | JavaScript Curriculum</title>
     <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
     <div class="page-shell">
         <header class="site-header">
             <h1>Day 13: Hoisting and TDZ</h1>
-            <p class="subtitle">Hands-on: In-class Tasks</p>
+            <p class="subtitle">Hands-on: In-class tasks (use the console)</p>
         </header>
         <main class="site-content">
             <article>
-                <h2>Hands-on Tasks</h2>
-                
+                <h2>Hands-on tasks</h2>
+                <p>Open DevTools <strong>Console</strong>. Implementations and comments live in <code>day-13/js/hands-on.js</code>. For tasks that would stop the whole file, this runner uses <code>try/catch</code> where noted; copy the exact snippets below into a <strong>fresh</strong> file when the brief asks you to.</p>
+
                 <section>
-                    <h3>Task 1: Hoisting Behavior</h3>
-                    <p>Understand how var, let, and const are hoisted differently:</p>
-                    <div id="topic1Code">
-                        <pre><code></code></pre>
-                    </div>
+                    <h3>Task 1: Predict the <code>var</code> hoist</h3>
+                    <p><strong>What to do:</strong> In a fresh JS file, type this exact snippet. <em>Before</em> running, predict each <code>console.log</code>. Run it and compare. Explain why the first log is <code>undefined</code> and not a <code>ReferenceError</code> (see comments in <code>hands-on.js</code>).</p>
+                    <pre><code>console.log(name);
+var name = "Priya";
+console.log(name);</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 2: TDZ (Temporal Dead Zone)</h3>
-                    <p>The area before a let/const declaration where they cannot be accessed:</p>
-                    <div id="topic2Code">
-                        <pre><code></code></pre>
-                    </div>
+                    <h3>Task 2: Trigger the TDZ</h3>
+                    <p><strong>What to do:</strong> In a fresh file, run <code>console.log(city); let city = "Jaipur";</code>. Predict, then run. Write down the exact error <strong>name</strong> and <strong>message</strong> (V8/Chrome/Node example: <code>ReferenceError: Cannot access 'city' before initialization</code>). Move <code>let city = "Jaipur";</code> <em>above</em> the <code>console.log</code> and confirm the file runs. In a comment, spell out what TDZ stands for.</p>
+                    <pre><code>// Broken (for prediction / one-off run):
+console.log(city);
+let city = "Jaipur";
+
+// Fixed:
+let city = "Jaipur";
+console.log(city);</code></pre>
                 </section>
 
                 <section>
-                    <h3>Task 3: Function Hoisting</h3>
-                    <p>Function declarations are fully hoisted, but function expressions are not:</p>
-                    <div id="topic3Code">
-                        <pre><code></code></pre>
-                    </div>
+                    <h3>Task 3: Function declaration vs expression</h3>
+                    <p><strong>What to do:</strong> In one file, add these four lines <strong>in this order</strong>: <code>sayHi();</code> then <code>greet();</code> then <code>function sayHi() { console.log("Hi"); }</code> then <code>var greet = function () { console.log("Hello"); };</code>. Predict which call works and which throws. Run and note the exact error <strong>type</strong> for the failing call. Comment on how hoisting differs between declarations and <code>var</code> function expressions.</p>
+                    <pre><code>sayHi();
+greet();
+function sayHi() { console.log("Hi"); }
+var greet = function () { console.log("Hello"); };</code></pre>
+                    <p style="font-size: 13px; color: #555;"><code>hands-on.js</code> wraps the failing <code>greet()</code> in <code>try/catch</code> so Task 4 still runs in the same page load.</p>
                 </section>
 
+                <section>
+                    <h3>Bonus: Trace the call stack</h3>
+                    <p><strong>What to do:</strong> Define <code>multiply(a, b)</code> (returns <code>a * b</code>), <code>square(n)</code> (returns <code>multiply(n, n)</code>), <code>printSquare(n)</code> (logs <code>square(n)</code>). Call <code>printSquare(5)</code>. In a comment, draw the call stack at the moment <code>multiply(5, 5)</code> is on top (four frames). Predict the final log. Add <code>console.trace()</code> inside <code>multiply</code> and compare DevTools’ stack to your sketch.</p>
+                    <pre><code>function multiply(a, b) {
+  console.trace();
+  return a * b;
+}</code></pre>
+                </section>
             </article>
         </main>
 
-                <aside class="site-outline">
+        <aside class="site-outline">
             <h2>Curriculum</h2>
             <nav>
                 <ul>
                     <li><a href="../../index.html">Overview</a></li>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 1 — Basics</summary>
                         <ul>
                             <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
@@ -57,8 +72,8 @@
                             <li><a href="../../day-1/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 2 — Variables</summary>
                         <ul>
                             <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
@@ -66,8 +81,8 @@
                             <li><a href="../../day-2/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 3 — Operators</summary>
                         <ul>
                             <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
@@ -75,8 +90,8 @@
                             <li><a href="../../day-3/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 4 — Control Flow</summary>
                         <ul>
                             <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
@@ -84,8 +99,8 @@
                             <li><a href="../../day-4/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 5 — Loops</summary>
                         <ul>
                             <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
@@ -93,8 +108,8 @@
                             <li><a href="../../day-5/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 6 — Functions</summary>
                         <ul>
                             <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
@@ -102,8 +117,8 @@
                             <li><a href="../../day-6/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 7 — Arrays</summary>
                         <ul>
                             <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
@@ -111,8 +126,8 @@
                             <li><a href="../../day-7/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 8 — Objects</summary>
                         <ul>
                             <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
@@ -120,8 +135,8 @@
                             <li><a href="../../day-8/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 9 — Modern Syntax</summary>
                         <ul>
                             <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
@@ -129,8 +144,8 @@
                             <li><a href="../../day-9/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 10 — DOM Basics</summary>
                         <ul>
                             <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
@@ -138,8 +153,8 @@
                             <li><a href="../../day-10/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 11 — Events</summary>
                         <ul>
                             <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
@@ -147,8 +162,8 @@
                             <li><a href="../../day-11/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
-                    <details >
+
+                    <details>
                         <summary>Day 12 — Error Handling</summary>
                         <ul>
                             <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
@@ -156,7 +171,7 @@
                             <li><a href="../../day-12/html/homework.html">Homework</a></li>
                         </ul>
                     </details>
-                    
+
                     <details open>
                         <summary>Day 13 — Hoisting and TDZ</summary>
                         <ul>
@@ -172,7 +187,3 @@
     <script src="../js/hands-on.js"></script>
 </body>
 </html>
-
-
-
-
