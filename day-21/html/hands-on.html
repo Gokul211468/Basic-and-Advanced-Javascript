@@ -3,9 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Day 21: Advanced Array & Object Patterns (Hands-on) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 21: Advanced Array & Object Patterns</h1>
+            <p class="subtitle">Hands-on: Guided Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Object Manipulation Exercises</h2>
+
+                <section>
+                    <h3>Task 1: Prove Shallow Clone Bug</h3>
+                    <p><strong>What to do:</strong> Create <code>const orig = { name: "Priya", addr: { city: "Jaipur" } }</code>. Make a shallow copy with spread: <code>const copy = { ...orig }</code>. Mutate <code>copy.addr.city = "Mumbai"</code>. Log <code>orig.addr.city</code>. Note the bug. Now use <code>structuredClone(orig)</code> and repeat. Confirm orig is untouched.</p>
+                    <pre><code>// Demonstrating the shallow clone bug
+const orig = {
+    name: "Priya",
+    addr: {
+        city: "Jaipur"
+    }
+};
+
+// Shallow copy using spread operator
+const copy = { ...orig };
+copy.addr.city = "Mumbai";
+
+console.log("After shallow clone mutation:");
+console.log("orig.addr.city:", orig.addr.city);  // "Mumbai" ← BUG!
+console.log("copy.addr.city:", copy.addr.city);  // "Mumbai"
+
+// The addresses are the same object reference
+console.log("Same address reference?", orig.addr === copy.addr);  // true
+
+// Reset for structuredClone test
+orig.addr.city = "Jaipur";
+
+// True deep copy using structuredClone
+const deepCopy = structuredClone(orig);
+deepCopy.addr.city = "Delhi";
+
+console.log("\nAfter structuredClone mutation:");
+console.log("orig.addr.city:", orig.addr.city);      // "Jaipur" ← SAFE!
+console.log("deepCopy.addr.city:", deepCopy.addr.city); // "Delhi"
+
+// The addresses are different objects
+console.log("Same address reference?", orig.addr === deepCopy.addr); // false
+
+/*
+Key Learning:
+1. Shallow cloning (spread, Object.assign) only copies top-level properties
+2. Nested objects are shared between original and copy
+3. Mutating nested properties affects both objects
+4. structuredClone() creates truly independent copies
+5. Always use deep cloning for nested data structures
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 2: Immutable Nested Update</h3>
+                    <p><strong>What to do:</strong> Take this state: <code>const state = { user: { name: "Priya", prefs: { theme: "light", lang: "en" } } }</code>. Write code that produces a NEW state with prefs.theme set to "dark", leaving state untouched. Use spread, don't mutate. Verify state.user.prefs.theme is still "light".</p>
+                    <pre><code>// Original state (deeply nested)
+const state = {
+    user: {
+        name: "Priya",
+        prefs: {
+            theme: "light",
+            lang: "en"
+        }
+    }
+};
+
+// Immutable update - create new state with theme changed to "dark"
+// Must spread at EVERY level that changes
+const newState = {
+    ...state,                    // Copy top level
+    user: {
+        ...state.user,           // Copy user level
+        prefs: {
+            ...state.user.prefs, // Copy prefs level
+            theme: "dark"        // Update only this field
+        }
+    }
+};
+
+// Verification - original state is completely untouched
+console.log("Original state theme:", state.user.prefs.theme);     // "light"
+console.log("New state theme:", newState.user.prefs.theme);       // "dark"
+
+// Reference checks - unchanged branches share references (efficient!)
+console.log("Same top-level object?", state === newState);                    // false (changed)
+console.log("Same user object?", state.user === newState.user);               // false (changed)
+console.log("Same prefs object?", state.user.prefs === newState.user.prefs); // false (changed)
+
+// But if we had other top-level properties, they'd be shared
+const stateWithExtra = { ...state, config: { debug: true } };
+const newStateWithExtra = {
+    ...stateWithExtra,
+    user: {
+        ...stateWithExtra.user,
+        prefs: { ...stateWithExtra.user.prefs, theme: "dark" }
+    }
+};
+console.log("Unchanged branch shared?", stateWithExtra.config === newStateWithExtra.config); // true
+
+/*
+Immutable Update Pattern:
+1. Spread (...) at every level that needs to change
+2. Only changed branches get new object references
+3. Unchanged branches share references (memory efficient)
+4. Original object remains completely untouched
+5. This pattern is fundamental to React state updates and Redux
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Update One Item in an Array</h3>
+                    <p><strong>What to do:</strong> Take <code>const tasks = [{ id: 1, title: "Learn JS", done: false }, { id: 2, title: "Build app", done: false }]</code>. Write a function <code>toggleDone(tasks, id)</code> that returns a NEW array with the matching task's done flipped — others untouched. Call it twice on the same tasks. Verify originals never mutate. Use .map and spread.</p>
+                    <pre><code>// Original task array
+const tasks = [
+    { id: 1, title: "Learn JS", done: false },
+    { id: 2, title: "Build app", done: false }
+];
+
+// Immutable array update function
+function toggleDone(tasks, id) {
+    return tasks.map(task => {
+        // Only update the task with matching id
+        if (task.id === id) {
+            return { ...task, done: !task.done };  // Create new task object
+        }
+        return task;  // Return unchanged task (same reference)
+    });
+}
+
+// Test the function multiple times
+const updatedTasks1 = toggleDone(tasks, 1);
+const updatedTasks2 = toggleDone(tasks, 2);
+const updatedTasks1Again = toggleDone(updatedTasks1, 1);
+
+// Verification - original array is never modified
+console.log("Original tasks:", tasks);
+// [{ id: 1, title: "Learn JS", done: false }, { id: 2, title: "Build app", done: false }]
+
+console.log("After toggling task 1:", updatedTasks1);
+// [{ id: 1, title: "Learn JS", done: true }, { id: 2, title: "Build app", done: false }]
+
+console.log("After toggling task 2:", updatedTasks2);
+// [{ id: 1, title: "Learn JS", done: false }, { id: 2, title: "Build app", done: true }]
+
+console.log("After toggling task 1 again:", updatedTasks1Again);
+// [{ id: 1, title: "Learn JS", done: false }, { id: 2, title: "Build app", done: false }]
+
+// Reference checks
+console.log("Original tasks untouched?", tasks[0].done === false && tasks[1].done === false); // true
+console.log("Same array reference?", tasks === updatedTasks1); // false
+console.log("Unchanged task shared reference?", tasks[1] === updatedTasks1[1]); // true (efficient!)
+
+/*
+Immutable Array Update Pattern:
+1. Use .map() to transform arrays without mutation
+2. Return new object for items that change
+3. Return same reference for unchanged items (memory efficient)
+4. Original array and objects remain untouched
+5. This enables time-travel debugging and optimizations
+6. Essential for React state management
+
+Alternative approaches:
+- Use filter() + concat() for removing/adding items
+- Use slice() + spread for inserting items
+- Use findIndex() + slice() for complex updates
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: Safe Deep Read</h3>
+                    <p><strong>What to do:</strong> Take a partial API response: <code>const data = { user: { name: "Priya", profile: { city: null } } }</code>. Write a single expression that reads <code>data.user.profile.city</code> and falls back to "Unknown" if anything in the chain is null/undefined. Now another expression reading <code>data.user.profile.bio?.length ?? 0</code>. Try with <code>data = {}</code> — confirm both return the fallbacks without crashing.</p>
+                    <pre><code>// Test data with nested structure and missing/null values
+const data = { 
+    user: { 
+        name: "Priya", 
+        profile: { 
+            city: null 
+        } 
+    } 
+};
+
+// Safe deep property access with optional chaining and nullish coalescing
+const city = data.user?.profile?.city ?? "Unknown";
+console.log("City:", city); // "Unknown"
+
+const bioLength = data.user?.profile?.bio?.length ?? 0;
+console.log("Bio length:", bioLength); // 0
+
+// Test with completely empty object
+const emptyData = {};
+
+const emptyCityAccess = emptyData.user?.profile?.city ?? "Unknown";
+console.log("Empty city access:", emptyCityAccess); // "Unknown"
+
+const emptyBioLength = emptyData.user?.profile?.bio?.length ?? 0;
+console.log("Empty bio length:", emptyBioLength); // 0
+
+// Test with partially missing data
+const partialData = { 
+    user: { 
+        name: "Aarav" 
+        // profile missing entirely
+    } 
+};
+
+const partialCityAccess = partialData.user?.profile?.city ?? "Unknown";
+console.log("Partial city access:", partialCityAccess); // "Unknown"
+
+const partialBioLength = partialData.user?.profile?.bio?.length ?? 0;
+console.log("Partial bio length:", partialBioLength); // 0
+
+/*
+Optional Chaining (?.) Benefits:
+1. Stops traversal at first null/undefined, returns undefined
+2. Prevents "Cannot read property 'x' of undefined" errors
+3. Works with properties, methods, and array indices
+4. More readable than nested if checks or try-catch
+
+Nullish Coalescing (??) Benefits:
+1. Only considers null/undefined as "falsy" (not 0, "", false)
+2. Provides default values for missing data
+3. More precise than || operator
+4. Perfect for API responses with uncertain structure
+
+Real-world usage:
+- API responses with optional fields
+- User preferences with fallbacks
+- Configuration objects with defaults
+- Form data validation
+- Nested component props in React
+*/</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 20 — Event Loop</summary>
+                        <ul>
+                            <li><a href="../../day-20/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-20/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-20/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 21 — Advanced Array & Object Patterns</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html" aria-current="page">Hands-on</a></li>
+                            <li><a href="homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 22 — Map and Set Collections</summary>
+                        <ul>
+                            <li><a href="../../day-22/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-22/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-22/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
     <script src="../js/hands-on.js"></script>
 </body>
 </html>

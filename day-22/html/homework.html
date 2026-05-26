@@ -3,9 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Day 22: Map and Set Collections (Homework) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
+    <style>
+        pre {
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        pre code {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
 </head>
 <body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 22: Map and Set Collections</h1>
+            <p class="subtitle">Homework: Take-home Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Advanced Collections Challenges</h2>
+
+                <section>
+                    <h3>Exercise 1: Tag Counter with Map</h3>
+                    <p><strong>What to do:</strong> Build a "tag counter": given an array of posts each with a .tags array, return a Map of tag → count. Use a Map (not an Object) and demonstrate how it's better for this use case.</p>
+                    <pre><code>// Sample data structure
+const posts = [
+    {
+      title: "Getting Started with React",
+      tags: ["js", "react", "frontend"]
+    },
+    {
+      title: "Node.js Best Practices", 
+      tags: ["js", "node", "backend"]
+    },
+    {
+      title: "CSS Grid Layout",
+      tags: ["css", "frontend", "layout"]
+    },
+    {
+      title: "React Hooks Deep Dive",
+      tags: ["js", "react", "hooks"]
+    }
+];
+
+// Tag counter implementation using Map
+function countTags(posts) {
+    const tagMap = new Map();
+    
+    for (const post of posts) {
+        for (const tag of post.tags) {
+            // Use Map's get with fallback pattern
+            tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+        }
+    }
+    
+    return tagMap;
+}
+
+const tagCounts = countTags(posts);
+
+console.log("Tag frequency analysis:");
+console.log(tagCounts);
+// Map(6) { 
+//   'js' => 3, 'react' => 2, 'frontend' => 2, 
+//   'node' => 1, 'backend' => 1, 'css' => 1, 'layout' => 1, 'hooks' => 1 
+// }
+
+// Convert to sorted array for display
+const sortedTags = [...tagCounts]
+    .sort(([,a], [,b]) => b - a)  // Sort by count descending
+    .map(([tag, count]) => `${tag}: ${count}`);
+
+console.log("Most popular tags:");
+sortedTags.forEach(tag => console.log(`  ${tag}`));
+
+// Why Map is better than Object for this:
+console.log("\nMap advantages:");
+console.log("Direct size:", tagCounts.size);  // O(1) vs Object.keys(obj).length
+console.log("Easy iteration:", [...tagCounts.keys()]);
+console.log("No prototype pollution risk");
+
+
+
+function countTagsAlt(posts) {
+    const tagMap = new Map();
+    
+    posts.forEach(post => 
+        post.tags.forEach(tag => 
+            tagMap.set(tag, (tagMap.get(tag) || 0) + 1)
+        )
+    );
+    
+    return tagMap;
+}</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 2: Set Operations Utility Library</h3>
+                    <p><strong>What to do:</strong> Build a <code>union(a, b)</code>, <code>intersection(a, b)</code>, <code>difference(a, b)</code> set of helpers from scratch using Set + spread. Test with overlapping sets and demonstrate mathematical set properties.</p>
+                    <pre><code>// Set operations utility library
+class SetMath {
+    // Union: A ∪ B (all elements from both sets)
+    static union(a, b) {
+        return new Set([...a, ...b]);
+    }
+    
+    // Intersection: A ∩ B (elements present in both sets)
+    static intersection(a, b) {
+        return new Set([...a].filter(value => b.has(value)));
+    }
+    
+    // Difference: A - B (elements in A but not B)  
+    static difference(a, b) {
+        return new Set([...a].filter(value => !b.has(value)));
+    }
+    
+    // Symmetric Difference: A ⊕ B (elements in either A or B, but not both)
+    static symmetricDifference(a, b) {
+        const diff1 = SetMath.difference(a, b);
+        const diff2 = SetMath.difference(b, a);
+        return SetMath.union(diff1, diff2);
+    }
+    
+    // Subset: A ⊆ B (all elements of A are in B)
+    static isSubset(a, b) {
+        return [...a].every(value => b.has(value));
+    }
+    
+    // Superset: A ⊇ B (A contains all elements of B)  
+    static isSuperset(a, b) {
+        return SetMath.isSubset(b, a);
+    }
+    
+    // Disjoint: A ∩ B = ∅ (no common elements)
+    static areDisjoint(a, b) {
+        return SetMath.intersection(a, b).size === 0;
+    }
+}
+
+// Test sets
+const frontend = new Set(["html", "css", "javascript", "react"]);
+const backend = new Set(["javascript", "node", "express", "mongodb"]);
+const mobile = new Set(["react", "swift", "kotlin"]);
+
+console.log("Set A (Frontend):", [...frontend]);
+console.log("Set B (Backend):", [...backend]);
+console.log("Set C (Mobile):", [...mobile]);
+
+// Mathematical operations
+console.log("\n=== Set Operations ===");
+
+const unionAB = SetMath.union(frontend, backend);
+console.log("A ∪ B (Union):", [...unionAB]);
+// All technologies: html, css, javascript, react, node, express, mongodb
+
+const intersectionAB = SetMath.intersection(frontend, backend);
+console.log("A ∩ B (Intersection):", [...intersectionAB]);
+// Common technologies: javascript
+
+const differenceAB = SetMath.difference(frontend, backend);
+console.log("A - B (Difference):", [...differenceAB]);
+// Frontend-only: html, css, react
+
+const symmetricDiffAB = SetMath.symmetricDifference(frontend, backend);
+console.log("A ⊕ B (Symmetric Diff):", [...symmetricDiffAB]);
+// Either frontend or backend, not both: html, css, react, node, express, mongodb
+
+// Set relationships
+console.log("\n=== Set Relationships ===");
+const jsOnly = new Set(["javascript"]);
+console.log("Is {javascript} ⊆ Frontend?", SetMath.isSubset(jsOnly, frontend));  // true
+console.log("Is Frontend ⊇ {javascript}?", SetMath.isSuperset(frontend, jsOnly));  // true
+console.log("Are Frontend and Mobile disjoint?", SetMath.areDisjoint(frontend, mobile));  // false (both have react)
+
+// Practical example: Skills matching
+const jobRequirements = new Set(["javascript", "react", "node"]);
+const candidateSkills = new Set(["javascript", "react", "html", "css"]);
+
+const matchingSkills = SetMath.intersection(jobRequirements, candidateSkills);
+const missingSkills = SetMath.difference(jobRequirements, candidateSkills);
+const extraSkills = SetMath.difference(candidateSkills, jobRequirements);
+
+console.log("\n=== Job Matching Example ===");
+console.log("Required skills:", [...jobRequirements]);
+console.log("Candidate skills:", [...candidateSkills]);
+console.log("Matching skills:", [...matchingSkills]);
+console.log("Missing skills:", [...missingSkills]);
+console.log("Extra skills:", [...extraSkills]);
+const matchPercentage = (matchingSkills.size / jobRequirements.size * 100).toFixed(1);
+console.log("Match percentage:", matchPercentage + "%");
+
+</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 3: Advanced Map Sorting and Transformation</h3>
+                    <p><strong>What to do:</strong> Convert a Map of { name → age } to an array of [name, age] pairs, sorted by age. Use destructuring and demonstrate multiple sorting approaches.</p>
+                    <pre><code>// Sample data: Map of person names to ages
+const ages = new Map([
+    ["Priya", 24],
+    ["Aarav", 30], 
+    ["Riya", 21],
+    ["Anaya", 27],
+    ["Karan", 35],
+    ["Diya", 19]
+]);
+
+console.log("Original Map:");
+console.log(ages);
+
+// Method 1: Sort by age (ascending)
+const sortedByAge = [...ages].sort(([, ageA], [, ageB]) => ageA - ageB);
+
+console.log("\nSorted by age (youngest first):");
+sortedByAge.forEach(([name, age]) => {
+    console.log(`${name}: ${age} years old`);
+});
+
+// Method 2: Sort by name (alphabetical)
+const sortedByName = [...ages].sort(([nameA], [nameB]) => nameA.localeCompare(nameB));
+
+console.log("\nSorted by name (alphabetical):");
+sortedByName.forEach(([name, age]) => {
+    console.log(`${name}: ${age} years old`);
+});
+
+// Method 3: Advanced filtering and sorting
+const adults = [...ages]
+    .filter(([, age]) => age >= 21)  // Filter adults only
+    .sort(([, ageA], [, ageB]) => ageB - ageA);  // Sort oldest first
+
+console.log("\nAdults only (oldest first):");
+adults.forEach(([name, age]) => {
+    console.log(`${name}: ${age} years old`);
+});
+
+// Method 4: Transform to objects with additional properties
+const enrichedData = [...ages]
+    .map(([name, age]) => ({
+        name,
+        age, 
+        category: age < 21 ? 'Teen' : age < 30 ? 'Young Adult' : 'Adult',
+        initials: name.split('').filter(char => char === char.toUpperCase()).join('')
+    }))
+    .sort((a, b) => a.age - b.age);
+
+console.log("\nEnriched and categorized data:");
+enrichedData.forEach(person => {
+    console.log(`${person.initials} - ${person.name} (${person.age}): ${person.category}`);
+});
+
+// Method 5: Group by age ranges using Map
+function groupByAgeRange(peopleMap) {
+    const ranges = new Map([
+        ['teens', []],
+        ['twenties', []],  
+        ['thirties', []]
+    ]);
+    
+    for (const [name, age] of peopleMap) {
+        if (age < 20) {
+            ranges.get('teens').push({ name, age });
+        } else if (age < 30) {
+            ranges.get('twenties').push({ name, age });
+        } else {
+            ranges.get('thirties').push({ name, age });
+        }
+    }
+    
+    // Sort within each group
+    ranges.forEach(group => group.sort((a, b) => a.age - b.age));
+    
+    return ranges;
+}
+
+const groupedAges = groupByAgeRange(ages);
+
+console.log("\nGrouped by age ranges:");
+groupedAges.forEach((people, range) => {
+    console.log(`${range.toUpperCase()}:`);
+    people.forEach(({ name, age }) => {
+        console.log(`  ${name} (${age})`);
+    });
+});
+
+// Method 6: Statistical analysis
+const ageStats = {
+    count: ages.size,
+    ages: [...ages.values()],
+    get average() {
+        return this.ages.reduce((sum, age) => sum + age, 0) / this.count;
+    },
+    get median() {
+        const sorted = [...this.ages].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    },
+    get min() {
+        return Math.min(...this.ages);
+    },
+    get max() {
+        return Math.max(...this.ages);
+    }
+};
+
+console.log("\nAge Statistics:");
+console.log(`Count: ${ageStats.count}`);
+console.log(`Average: ${ageStats.average.toFixed(1)} years`);
+console.log(`Median: ${ageStats.median} years`);
+console.log(`Range: ${ageStats.min} - ${ageStats.max} years`);
+
+
+</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 20 — Event Loop</summary>
+                        <ul>
+                            <li><a href="../../day-20/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-20/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-20/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 21 — Advanced Array & Object Patterns</summary>
+                        <ul>
+                            <li><a href="../../day-21/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-21/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-21/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 22 — Map and Set Collections</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html">Hands-on</a></li>
+                            <li><a href="homework.html" aria-current="page">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
     <script src="../js/homework.js"></script>
 </body>
 </html>

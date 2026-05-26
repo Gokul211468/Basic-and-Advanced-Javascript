@@ -77,3 +77,74 @@ const set = new Set();
 set.add({ id: 1 });
 set.add({ id: 1 });              // DIFFERENT object → both kept
 console.log(set.size);           // 2
+
+
+//Topic 4 Set Operations
+
+const a = new Set([1, 2, 3]);
+const b = new Set([2, 3, 4]);
+
+// Union — A ∪ B
+const union = new Set([...a, ...b]);
+console.log([...union]);              // [1, 2, 3, 4]
+
+// Intersection — A ∩ B
+const inter = new Set([...a].filter((x) => b.has(x)));
+console.log([...inter]);              // [2, 3]
+
+// Difference — A − B
+const diff = new Set([...a].filter((x) => !b.has(x)));
+console.log([...diff]);               // [1]
+
+// Modern (ES2025+, where supported):
+// a.union(b); a.intersection(b); a.difference(b);
+
+
+//Topic 5 When Each
+
+// Use case: caching by request object
+const cache = new Map();
+
+function fetchWithCache(req) {
+  if (cache.has(req)) return cache.get(req);   // hit
+  const result = doFetch(req);
+  cache.set(req, result);                       // store
+  return result;
+}
+
+// Use case: unique tag list from many posts
+const allTags = new Set();
+posts.forEach((p) => p.tags.forEach((t) => allTags.add(t)));
+console.log([...allTags]);
+
+
+//Topic 6 WeakMap & WeakSet
+
+const wm = new WeakMap();
+let user = { id: 1, name: "Priya" };
+
+wm.set(user, { lastSeen: Date.now() });   // key MUST be an object
+console.log(wm.get(user));                 // { lastSeen: ... }
+
+user = null;                                // last reference dropped
+// Garbage collector eventually removes the entry from wm.
+// We cannot observe this directly — that's the point.
+
+// Practical use: per-DOM-node metadata, no leaks when nodes are removed
+const dataForElement = new WeakMap();
+function attachData(el, data) {
+  dataForElement.set(el, data);
+}
+// When the element is removed from the DOM AND no other reference exists,
+// the WeakMap entry is auto-cleaned. No memory leak.
+
+// WeakSet — same idea, just storing object membership
+const seen = new WeakSet();
+function process(item) {
+  if (seen.has(item)) return;     // skip already-processed
+  seen.add(item);
+  // ... do work
+}
+
+
+

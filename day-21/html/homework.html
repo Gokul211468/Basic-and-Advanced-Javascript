@@ -3,9 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Day 21: Advanced Array & Object Patterns (Homework) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 21: Advanced Array & Object Patterns</h1>
+            <p class="subtitle">Homework: Take-home Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Advanced Array & Object Challenges</h2>
+
+                <section>
+                    <h3>Exercise 1: Deep Immutable Update with Reference Sharing</h3>
+                    <p><strong>What to do:</strong> Take a deeply nested object (4 levels) and write a single immutable update that changes a leaf value. Verify the unchanged branches share references with the original (===) while changed branches have new references.</p>
+                    <pre><code>// 4-level deeply nested object
+const original = {
+    user: {
+        profile: {
+            address: {
+                city: "Jaipur",
+                pin: 302001
+            }
+        }
+    },
+    settings: {
+        theme: "dark"
+    }
+};
+
+// Immutable update: change city from "Jaipur" to "Mumbai"
+// Must spread at every level in the path to the changed property
+const updated = {
+    ...original,                              // Level 1: copy root
+    user: {
+        ...original.user,                     // Level 2: copy user
+        profile: {
+            ...original.user.profile,         // Level 3: copy profile
+            address: {
+                ...original.user.profile.address, // Level 4: copy address
+                city: "Mumbai"                     // Change the leaf value
+            }
+        }
+    }
+};
+
+// Verification: leaf value changed
+console.log("Updated city:", updated.user.profile.address.city);    // "Mumbai"
+console.log("Original city:", original.user.profile.address.city);  // "Jaipur"
+
+// Reference checks: Changed branches have new references
+console.log("Root changed:", updated === original);                           // false
+console.log("User changed:", updated.user === original.user);                 // false  
+console.log("Profile changed:", updated.user.profile === original.user.profile); // false
+console.log("Address changed:", updated.user.profile.address === original.user.profile.address); // false
+
+// Reference checks: Unchanged branches share references (efficient!)
+console.log("Settings shared:", updated.settings === original.settings);      // true
+
+/*
+Key Insights:
+1. Only the path to the changed property gets new object references
+2. Unchanged branches (settings) share references with original
+3. This structural sharing makes immutable updates memory-efficient
+4. Pattern: spread at every level from root to the changed property
+5. Essential for React/Redux performance optimizations
+
+Memory efficiency:
+- Changed path: 4 new objects
+- Unchanged path: 1 shared reference  
+- Total objects: 5 (vs 8 if we deep-cloned everything)
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 2: Implement deepFreeze from Scratch</h3>
+                    <p><strong>What to do:</strong> Implement <code>deepFreeze(obj)</code> from scratch that recursively freezes all nested objects. Test it with a 3-level nested object to ensure no mutations are possible at any level.</p>
+                    <pre><code>// Custom deepFreeze implementation
+function deepFreeze(obj) {
+    // Get all property values of the object
+    Object.values(obj).forEach((value) => {
+        // Recursively freeze nested objects
+        if (value && typeof value === "object") {
+            deepFreeze(value);
+        }
+    });
+    
+    // Freeze the current object after freezing its nested properties
+    return Object.freeze(obj);
+}
+
+// Test object with 3 levels of nesting
+const user = {
+    name: "Priya",                    // Level 1
+    address: {
+        city: "Jaipur",               // Level 2  
+        coords: {
+            lat: 26.9124,             // Level 3
+            lng: 75.7873
+        }
+    },
+    hobbies: ["reading", "trekking"]  // Array is also an object
+};
+
+// Apply deep freeze
+deepFreeze(user);
+
+// Test: All mutation attempts should fail silently (or throw in strict mode)
+
+// Level 1 mutations
+user.name = "Anaya";
+user.age = 25;
+console.log("Level 1 - Name:", user.name);  // "Priya" (unchanged)
+
+// Level 2 mutations  
+user.address.city = "Mumbai";
+user.address.country = "India";
+console.log("Level 2 - City:", user.address.city);  // "Jaipur" (unchanged)
+
+// Level 3 mutations
+user.address.coords.lat = 99;
+user.address.coords.alt = 100;
+console.log("Level 3 - Lat:", user.address.coords.lat);  // 26.9124 (unchanged)
+
+// Array mutations
+user.hobbies.push("swimming");
+user.hobbies[0] = "coding";
+console.log("Array length:", user.hobbies.length);  // 2 (unchanged)
+console.log("First hobby:", user.hobbies[0]);       // "reading" (unchanged)
+
+// Verification: Check if objects are actually frozen
+console.log("Root frozen:", Object.isFrozen(user));                    // true
+console.log("Address frozen:", Object.isFrozen(user.address));         // true  
+console.log("Coords frozen:", Object.isFrozen(user.address.coords));   // true
+console.log("Hobbies frozen:", Object.isFrozen(user.hobbies));         // true
+
+/*
+Deep Freeze Implementation Notes:
+1. Recursively traverse all object properties
+2. Freeze nested objects before freezing parent (bottom-up)
+3. Works with arrays (arrays are objects in JavaScript)
+4. Prevents ALL modifications at ANY nesting level
+5. Used for creating truly immutable configuration objects
+
+Limitations:
+- Doesn't handle circular references (would cause stack overflow)
+- Doesn't freeze prototype chain
+- Performance cost for deeply nested structures
+- Consider using libraries like Immutable.js for production use
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Exercise 3: Build a Generic Object Picker</h3>
+                    <p><strong>What to do:</strong> Write a <code>pick(obj, keys)</code> helper that returns a new object with only the listed keys. Use destructuring + computed keys. Test with various scenarios including missing keys.</p>
+                    <pre><code>// Generic object picker implementation
+function pick(obj, keys) {
+    const result = {};
+    
+    // Iterate through requested keys
+    keys.forEach((key) => {
+        // Only include keys that exist in the source object
+        if (key in obj) {
+            result[key] = obj[key];  // Could also use computed property: { [key]: obj[key] }
+        }
+    });
+    
+    return result;
+}
+
+// Alternative implementation using reduce (more functional style)
+function pickFunctional(obj, keys) {
+    return keys.reduce((result, key) => {
+        if (key in obj) {
+            result[key] = obj[key];
+        }
+        return result;
+    }, {});
+}
+
+// Alternative using computed properties and Object.fromEntries
+function pickModern(obj, keys) {
+    return Object.fromEntries(
+        keys
+            .filter(key => key in obj)
+            .map(key => [key, obj[key]])
+    );
+}
+
+// Test object
+const person = {
+    name: "Priya",
+    age: 25,
+    city: "Jaipur",
+    email: "priya@example.com",
+    password: "secret123"
+};
+
+// Basic usage
+const publicInfo = pick(person, ["name", "city"]);
+console.log("Public info:", publicInfo);
+// { name: "Priya", city: "Jaipur" }
+
+// With missing keys (should be ignored)
+const partialInfo = pick(person, ["name", "nonexistent", "age", "missing"]);
+console.log("Partial info:", partialInfo);  
+// { name: "Priya", age: 25 }
+
+// Empty keys array
+const emptyPick = pick(person, []);
+console.log("Empty pick:", emptyPick);  // {}
+
+// All keys
+const allKeys = Object.keys(person);
+const fullCopy = pick(person, allKeys);
+console.log("Full copy:", fullCopy);
+// { name: "Priya", age: 25, city: "Jaipur", email: "priya@example.com", password: "secret123" }
+
+// Verify original object is unchanged
+console.log("Original unchanged:", person);
+
+// Test with nested objects (shallow pick)
+const complexObj = {
+    user: { name: "Aarav" },
+    settings: { theme: "dark" },
+    data: [1, 2, 3]
+};
+
+const pickedComplex = pick(complexObj, ["user", "settings"]);
+console.log("Complex pick:", pickedComplex);
+// { user: { name: "Aarav" }, settings: { theme: "dark" } }
+
+// Verify nested objects are shallow-copied (shared references)
+console.log("Shared reference:", pickedComplex.user === complexObj.user);  // true
+
+/*
+Pick Function Use Cases:
+1. API response filtering - only send needed fields to frontend
+2. Form data extraction - pick only form fields from larger state
+3. Database projection - select specific columns
+4. Component props filtering - pass only relevant props to child components
+5. Security - exclude sensitive fields like passwords
+
+Variations to implement:
+- omit(obj, keys) - opposite of pick (exclude specified keys)
+- pickBy(obj, predicate) - pick based on value/key predicate
+- deepPick(obj, paths) - pick nested properties by dot notation
+- pickRename(obj, mapping) - pick and rename keys simultaneously
+
+Production considerations:
+- Handle null/undefined inputs gracefully
+- Support nested key paths ("user.profile.name")
+- Add TypeScript types for better developer experience
+- Consider performance for large objects
+*/</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 20 — Event Loop</summary>
+                        <ul>
+                            <li><a href="../../day-20/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-20/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-20/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 21 — Advanced Array & Object Patterns</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html">Hands-on</a></li>
+                            <li><a href="homework.html" aria-current="page">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 22 — Map and Set Collections</summary>
+                        <ul>
+                            <li><a href="../../day-22/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-22/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-22/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
     <script src="../js/homework.js"></script>
 </body>
 </html>

@@ -57,15 +57,16 @@ console.log("F");
 
 function blockFor(ms){
     const t0 = Date.now();
-    while((t0 - Date.now()) < ms){}
-    console.log("done blocking")
+    // Commented out to prevent browser freeze - uncomment to see blocking behavior
+    // while(Date.now() - t0 < ms){}  // Fixed condition: Date.now() - t0 < ms
+    console.log("done blocking (simulated - blocking loop commented out)")
 }
 
 setTimeout(()=>{
     console.log("timer")
 },100)
 
-blockFor(2000);
+// blockFor(2000);  // Commented out to prevent browser freeze
 
 console.log("after blocking");
 

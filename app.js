@@ -1,7 +1,6 @@
-// import { formatPrice, gst, TAX_RATE } from "./utils.js";
-import * as utils from "./utils.js";
 
-console.log(utils.TAX_RATE);
-console.log(utils.countcount);    // 0
-utils.inc();
-console.log(utils.count);    // 1
+import { add, multiply, divide } from "./math/index.js";
+
+console.log(add(10, 5));
+console.log(multiply(10, 5));
+console.log(divide(10, 5));

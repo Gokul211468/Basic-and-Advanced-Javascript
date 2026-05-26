@@ -3,9 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Day 20: Event Loop (Hands-on) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 20: Event Loop</h1>
+            <p class="subtitle">Hands-on: Guided Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Event Loop Exercises</h2>
+
+                <section>
+                    <h3>Task 1: Predict the Output</h3>
+                    <p><strong>What to do:</strong> Type this exactly, predict the output BEFORE running, then run and match against your prediction. In a comment, list which lines were sync, which microtask, which macrotask.</p>
+                    <pre><code>console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve().then(() => console.log("3"));
+console.log("4");
+
+// PREDICTION: 1, 4, 3, 2
+// ACTUAL OUTPUT: 1, 4, 3, 2 ✅
+
+// Execution analysis:
+// Line 1: console.log("1") - SYNCHRONOUS - executes immediately
+// Line 2: setTimeout(..., 0) - MACROTASK - queued for later
+// Line 3: Promise.resolve().then(...) - MICROTASK - queued with high priority  
+// Line 4: console.log("4") - SYNCHRONOUS - executes immediately
+
+// Execution order:
+// 1. Run all synchronous code first → Output: "1", "4"
+// 2. Drain microtask queue completely → Output: "3"  
+// 3. Execute one macrotask → Output: "2"
+
+/*
+Key insight: Even setTimeout(0) doesn't mean "now" - it means 
+"queue this for execution after all sync code and microtasks complete"
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 2: Two Promises and a Timer</h3>
+                    <p><strong>What to do:</strong> Run this code, predict the output, then compare. In a comment, draw the queues at each step to visualize how the event loop processes them.</p>
+                    <pre><code>console.log("A");
+setTimeout(() => console.log("B"), 0);
+Promise.resolve().then(() => console.log("C")).then(() => console.log("D"));
+queueMicrotask(() => console.log("E"));
+console.log("F");
+
+// PREDICTION: A, F, C, E, D, B
+// ACTUAL OUTPUT: A, F, C, E, D, B ✅
+
+// Step-by-step queue analysis:
+
+// Initial state:
+// Call Stack: [script execution]
+// Microtask Queue: []
+// Macrotask Queue: []
+
+// After line 1: console.log("A")
+// Output: "A"
+// Call Stack: [script execution]
+// Microtask Queue: []
+// Macrotask Queue: []
+
+// After line 2: setTimeout(...)
+// Call Stack: [script execution]  
+// Microtask Queue: []
+// Macrotask Queue: [() => console.log("B")]
+
+// After line 3: Promise.resolve().then(...).then(...)
+// Call Stack: [script execution]
+// Microtask Queue: [() => console.log("C")]
+// Macrotask Queue: [() => console.log("B")]
+
+// After line 4: queueMicrotask(...)
+// Call Stack: [script execution]
+// Microtask Queue: [() => console.log("C"), () => console.log("E")]  
+// Macrotask Queue: [() => console.log("B")]
+
+// After line 5: console.log("F")
+// Output: "A", "F"
+// Call Stack: []  (script done)
+// Microtask Queue: [() => console.log("C"), () => console.log("E")]
+// Macrotask Queue: [() => console.log("B")]
+
+// Microtask drain:
+// 1. Execute C → schedules D as new microtask
+//    Output: "A", "F", "C" 
+//    Microtask Queue: [() => console.log("E"), () => console.log("D")]
+// 2. Execute E
+//    Output: "A", "F", "C", "E"
+//    Microtask Queue: [() => console.log("D")]  
+// 3. Execute D  
+//    Output: "A", "F", "C", "E", "D"
+//    Microtask Queue: []
+
+// Macrotask execution:
+// Execute B
+// Final Output: "A", "F", "C", "E", "D", "B"</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Block the Loop</h3>
+                    <p><strong>What to do:</strong> Write a <code>blockFor(ms)</code> that busy-waits for ms milliseconds (use a while with Date.now()). Schedule a setTimeout(() => console.log("timer"), 100). Immediately call blockFor(2000) then console.log("after block"). Note the timer doesn't fire until well after 100ms.</p>
+                    <pre><code>function blockFor(ms) {
+    const start = Date.now();
+    // WARNING: This is a BLOCKING operation - don't do this in real apps!
+    while (Date.now() - start < ms) {
+        // Busy-wait loop - burns CPU and blocks everything
+    }
+    console.log(`Done blocking for ${ms}ms`);
+}
+
+// Schedule a timer for 100ms
+setTimeout(() => {
+    const elapsed = Date.now() - startTime;
+    console.log(`Timer fired after ${elapsed}ms (expected ~100ms)`);
+}, 100);
+
+const startTime = Date.now();
+
+// Block the main thread for 2 seconds
+blockFor(2000);
+
+console.log("After blocking");
+
+/*
+Expected Output:
+(2+ second pause while blocking)
+Done blocking for 2000ms
+After blocking  
+Timer fired after ~2000ms (expected ~100ms)
+
+Key insights:
+1. The setTimeout callback can't execute until the call stack is clear
+2. blockFor(2000) holds the call stack hostage for 2 full seconds  
+3. Even though we set a 100ms timer, it fires after 2000ms
+4. This demonstrates why JavaScript is "single-threaded" - 
+   one blocking operation freezes everything
+5. In a real browser, the entire tab would be frozen during blocking
+   - No scrolling, clicking, or other interactions possible
+   - This is why we break up heavy work with setTimeout/web workers
+
+Performance lesson: NEVER write blocking code like this in production!
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: Microtask Storm</h3>
+                    <p><strong>What to do:</strong> Write a function that schedules 5 setTimeout(fn, 0) calls. Inside ONE of the timers, schedule 3 Promise.resolve().then(...). Predict the output. Run. Verify. In a comment, explain how microtasks "starve" macrotasks if abused.</p>
+                    <pre><code>// Schedule 5 timers
+for (let i = 1; i <= 5; i++) {
+    setTimeout(() => {
+        console.log(`Timer ${i}`);
+        
+        // In the 3rd timer, create a "microtask storm"
+        if (i === 3) {
+            console.log("  Creating microtasks...");
+            Promise.resolve().then(() => console.log("  → Promise 1"));
+            Promise.resolve().then(() => console.log("  → Promise 2"));  
+            Promise.resolve().then(() => console.log("  → Promise 3"));
+        }
+    }, 0);
+}
+
+/*
+Expected Output:
+Timer 1
+Timer 2  
+Timer 3
+  Creating microtasks...
+  → Promise 1
+  → Promise 2
+  → Promise 3
+Timer 4
+Timer 5
+
+Execution Flow:
+1. All 5 timers get queued as macrotasks
+2. Event loop picks Timer 1 → executes → checks microtasks (none)
+3. Event loop picks Timer 2 → executes → checks microtasks (none)  
+4. Event loop picks Timer 3 → executes → creates 3 microtasks
+5. Before moving to Timer 4, event loop MUST drain ALL microtasks
+   → Promise 1, Promise 2, Promise 3 all execute
+6. Only then can Timer 4 and Timer 5 execute
+
+MICROTASK STARVATION WARNING:
+If microtasks keep creating more microtasks indefinitely:
+
+Promise.resolve().then(function createMore() {
+    console.log("Microtask running...");
+    Promise.resolve().then(createMore);  // Creates another microtask!
+});
+
+setTimeout(() => console.log("This will NEVER run!"), 0);
+
+This would create an infinite loop of microtasks, preventing ANY macrotasks 
+from ever executing. The setTimeout would be starved forever.
+
+Real-world implications:
+- User interactions (clicks, scrolls) are macrotasks
+- If you create too many microtasks, the UI becomes unresponsive  
+- Always be careful with recursive Promise chains
+- Break up heavy Promise work with occasional setTimeout(0) to yield
+*/</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 20 — Event Loop</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html" aria-current="page">Hands-on</a></li>
+                            <li><a href="homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 21 — Advanced Array & Object Patterns</summary>
+                        <ul>
+                            <li><a href="../../day-21/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-21/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-21/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 22 — Map and Set Collections</summary>
+                        <ul>
+                            <li><a href="../../day-22/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-22/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-22/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
     <script src="../js/hands-on.js"></script>
 </body>
 </html>

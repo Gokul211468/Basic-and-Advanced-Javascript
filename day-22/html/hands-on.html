@@ -3,9 +3,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Day 22: Map and Set Collections (Hands-on) | JavaScript Curriculum</title>
+    <link rel="stylesheet" href="../../shared/css/style.css">
 </head>
 <body>
+    <div class="page-shell">
+        <header class="site-header">
+            <h1>Day 22: Map and Set Collections</h1>
+            <p class="subtitle">Hands-on: Guided Practice</p>
+        </header>
+        <main class="site-content">
+            <article>
+                <h2>Map and Set Exercises</h2>
+
+                <section>
+                    <h3>Task 1: Map vs Object</h3>
+                    <p><strong>What to do:</strong> Build a Map of products: "pen" → 50, "book" → 200, "bag" → 800. Iterate with for...of and log each as "item: ₹price". Use .has, .get, .delete, .size. Convert it to an Object with Object.fromEntries and back to a Map with new Map(Object.entries(...)).</p>
+                    <pre><code>// Creating and manipulating a Map
+const products = new Map();
+
+// Adding key-value pairs
+products.set("pen", 50);
+products.set("book", 200);
+products.set("bag", 800);
+
+// Iterating with for...of (preserves insertion order)
+console.log("Product catalog:");
+for (const [item, price] of products) {
+    console.log(`${item}: ₹${price}`);
+}
+// Output:
+// pen: ₹50
+// book: ₹200
+// bag: ₹800
+
+// Map methods demonstration
+console.log("Has pen?", products.has("pen"));        // true
+console.log("Price of pen:", products.get("pen"));   // 50
+products.delete("pen");
+console.log("Size after deletion:", products.size);  // 2
+
+// Object ↔ Map conversion
+const obj = Object.fromEntries(products);
+console.log("Converted to object:", obj);
+// { book: 200, bag: 800 }
+
+const mapAgain = new Map(Object.entries(obj));
+console.log("Back to Map:", mapAgain);
+// Map(2) { 'book' => 200, 'bag' => 800 }
+
+</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 2: Deduplicate with Set</h3>
+                    <p><strong>What to do:</strong> Take an array of student IDs with duplicates: [101, 102, 103, 101, 104, 102, 105]. Use a Set to deduplicate. Convert back to an array. Now compute the count of UNIQUE IDs. Try with mixed types [1, "1", 1, true, 1n] — predict and verify.</p>
+                    <pre><code>// Student IDs with duplicates
+const ids = [101, 102, 103, 101, 104, 102, 105];
+
+// Deduplicate using Set
+const uniqueIds = [...new Set(ids)];
+console.log("Unique student IDs:", uniqueIds);
+// [101, 102, 103, 104, 105]
+
+// Count unique IDs
+console.log("Number of unique students:", uniqueIds.length);
+// 5
+
+// Mixed types demonstration
+const mixed = [1, "1", 1, true, 1n];
+console.log("Original mixed array:", mixed);
+
+const uniqueMixed = [...new Set(mixed)];
+console.log("Deduplicated mixed:", uniqueMixed);
+// [1, "1", true, 1n]
+
+console.log("Unique count:", uniqueMixed.length);
+// 4
+
+</code></pre>
+                </section>
+
+                <section>
+                    <h3>Task 3: Cache with Map</h3>
+                    <p><strong>What to do:</strong> Write memoize(fn) — but this time use a Map instead of an object. Wrap an expensiveSquare(n) that logs "computing..." and returns n * n. Verify that calling it twice with 5 only logs "computing..." once. Then add a cache.size check.</p>
+                    <pre><code>// Memoization using Map (instead of Object)
+function memoize(fn) {
+    const cache = new Map();  // Map allows any type as key
+    
+    function memoized(arg) {
+        // Check if result is already cached
+        if (cache.has(arg)) {
+            console.log(`Cache hit for ${arg}`);
+            return cache.get(arg);
+        }
+        
+        // Compute and store result
+        console.log(`Computing result for ${arg}...`);
+        const result = fn(arg);
+        cache.set(arg, result);
+        
+        return result;
+    }
+    
+    // Expose cache for debugging
+    memoized.cache = cache;
+    return memoized;
+}
+
+// Expensive function to memoize
+function expensiveSquare(n) {
+    console.log("  → Running expensive calculation...");
+    return n * n;
+}
+
+// Create memoized version
+const memoizedSquare = memoize(expensiveSquare);
+
+// Test memoization
+console.log("First call:");
+console.log("Result:", memoizedSquare(5));
+
+console.log("\nSecond call:");
+console.log("Result:", memoizedSquare(5));
+
+console.log("\nThird call with different input:");
+console.log("Result:", memoizedSquare(7));
+
+console.log("\nCache statistics:");
+console.log("Cache size:", memoizedSquare.cache.size);
+console.log("Cached keys:", [...memoizedSquare.cache.keys()]);
+
+/*
+Expected Output:
+First call:
+Computing result for 5...
+  → Running expensive calculation...
+Result: 25
+
+Second call:
+Cache hit for 5
+Result: 25
+
+Third call with different input:
+Computing result for 7...
+  → Running expensive calculation...
+Result: 49
+
+Cache statistics:
+Cache size: 2
+Cached keys: [5, 7]
+
+
+*/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Bonus: WeakMap for Private Data</h3>
+                    <p><strong>What to do:</strong> Use a WeakMap to store "metadata" for objects without modifying them. Build a tiny attach/get API: attach(obj, data) and get(obj). Test by attaching { lastClick: Date.now() } to two button objects. Drop one of the button references. Conceptually, the WeakMap entry will be GC'd.</p>
+                    <pre><code>// WeakMap for private metadata storage
+const metadata = new WeakMap();
+
+// API for attaching/retrieving metadata
+function attach(obj, data) {
+    metadata.set(obj, data);
+    console.log("Metadata attached to object");
+}
+
+function get(obj) {
+    return metadata.get(obj);
+}
+
+// Test objects (simulating DOM buttons)
+let button1 = {
+    id: "save-btn",
+    text: "Save"
+};
+
+let button2 = {
+    id: "cancel-btn", 
+    text: "Cancel"
+};
+
+// Attach metadata without modifying the objects
+attach(button1, {
+    lastClick: Date.now(),
+    clickCount: 3,
+    disabled: false
+});
+
+attach(button2, {
+    lastClick: Date.now() - 5000,
+    clickCount: 1,
+    disabled: true
+});
+
+// Retrieve metadata
+console.log("Button 1 metadata:", get(button1));
+console.log("Button 2 metadata:", get(button2));
+
+// Demonstrate no direct modification
+console.log("Button 1 original:", button1);
+// Object remains unchanged - no metadata properties added
+
+// Simulate button removal (memory cleanup)
+console.log("Before nulling button1...");
+button1 = null;  // Last reference dropped
+
+// The WeakMap entry for the original button1 object
+// will be garbage collected automatically
+console.log("Button1 reference dropped - WeakMap entry will be GC'd");
+
+// button2 metadata still accessible
+console.log("Button 2 still has metadata:", get(button2));
+
+</code></pre>
+                </section>
+
+            </article>
+        </main>
+
+        <aside class="site-outline">
+            <h2>Curriculum</h2>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">Overview</a></li>
+                    
+                    <details>
+                        <summary>Day 1 — Basics</summary>
+                        <ul>
+                            <li><a href="../../day-1/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-1/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-1/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 2 — Variables</summary>
+                        <ul>
+                            <li><a href="../../day-2/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-2/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-2/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 3 — Operators</summary>
+                        <ul>
+                            <li><a href="../../day-3/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-3/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-3/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 4 — Control Flow</summary>
+                        <ul>
+                            <li><a href="../../day-4/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-4/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-4/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 5 — Loops</summary>
+                        <ul>
+                            <li><a href="../../day-5/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-5/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-5/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 6 — Functions</summary>
+                        <ul>
+                            <li><a href="../../day-6/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-6/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-6/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 7 — Arrays</summary>
+                        <ul>
+                            <li><a href="../../day-7/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-7/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-7/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 8 — Objects</summary>
+                        <ul>
+                            <li><a href="../../day-8/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-8/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-8/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 9 — Modern Syntax</summary>
+                        <ul>
+                            <li><a href="../../day-9/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-9/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-9/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 10 — DOM Basics</summary>
+                        <ul>
+                            <li><a href="../../day-10/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-10/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-10/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 11 — Events</summary>
+                        <ul>
+                            <li><a href="../../day-11/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-11/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-11/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 12 — Error Handling</summary>
+                        <ul>
+                            <li><a href="../../day-12/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-12/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-12/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 13 — Hoisting and TDZ</summary>
+                        <ul>
+                            <li><a href="../../day-13/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-13/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-13/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 14 — Closures and Scope</summary>
+                        <ul>
+                            <li><a href="../../day-14/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-14/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-14/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 15 — The `this` Keyword</summary>
+                        <ul>
+                            <li><a href="../../day-15/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-15/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-15/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 16 — Prototypes</summary>
+                        <ul>
+                            <li><a href="../../day-16/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-16/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-16/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 17 — ES6 Classes</summary>
+                        <ul>
+                            <li><a href="../../day-17/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-17/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-17/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 18 — Promises</summary>
+                        <ul>
+                            <li><a href="../../day-18/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-18/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-18/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 19 — Async/Await</summary>
+                        <ul>
+                            <li><a href="../../day-19/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-19/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-19/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 20 — Event Loop</summary>
+                        <ul>
+                            <li><a href="../../day-20/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-20/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-20/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Day 21 — Advanced Array & Object Patterns</summary>
+                        <ul>
+                            <li><a href="../../day-21/html/lesson.html">Lesson</a></li>
+                            <li><a href="../../day-21/html/hands-on.html">Hands-on</a></li>
+                            <li><a href="../../day-21/html/homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                    
+                    <details open>
+                        <summary>Day 22 — Map and Set Collections</summary>
+                        <ul>
+                            <li><a href="lesson.html">Lesson</a></li>
+                            <li><a href="hands-on.html" aria-current="page">Hands-on</a></li>
+                            <li><a href="homework.html">Homework</a></li>
+                        </ul>
+                    </details>
+                </ul>
+            </nav>
+        </aside>
+    </div>
     <script src="../js/hands-on.js"></script>
 </body>
 </html>
